@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ua">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>для сонічки</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #d3d3d3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            height: 100vh;
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        .top-bar {
+            width: 100%;
+            height: 60px;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 10;
+        }
+
+        .title {
+            font-size: 14px;
+            color: black;
+        }
+
+        .back-button {
+            background-color: transparent;
+            border: 2px solid black;
+            color: black;
+            font-size: 12px;
+            padding: 5px 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        .back-button:hover {
+            background-color: black;
+            color: white;
+        }
+
+        .content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
+            width: 100%;
+            position: relative;
+            padding-top: 50px;
+        }
+
+        .main-image {
+            max-height: 80vh;
+            max-width: 100%;
+            position: relative;
+        }
+
+        .overlay-image {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            height: 30%;
+            width: 63%;
+            opacity: 0;
+            transition: opacity 0.5s, transform 0.5s;
+        }
+
+        .overlay-image.fade-in {
+            opacity: 0.95;
+            transform: translate(-50%, -50%) scale(1.05);
+        }
+
+        .overlay-image.fade-out {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .date-picker {
+            position: fixed;
+            bottom: 20px;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+        }
+
+        select {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            padding: 5px;
+        }
+
+        @media (max-width: 480px) {
+            .top-bar {
+                height: 50px;
+                padding: 0 10px;
+            }
+
+            .title {
+                font-size: 10px;
+            }
+
+            .back-button {
+                font-size: 10px;
+                padding: 3px 8px;
+            }
+
+            .date-picker {
+                font-size: 10px;
+                padding: 5px;
+            }
+
+            select {
+                font-size: 10px;
+                padding: 3px;
+            }
+        }
+        .overlay-text {
+        position: absolute;
+        color: white;
+        font-size: 12px;
+        text-align: center;
+        width: 80%;
+        top: 77%;
+        transform: translateY(-50%);
+        font-family: 'Press Start 2P', cursive;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="top-bar">
+        <div class="title">Star for Star</div>
+        <button class="back-button" onclick="history.back()">Назад</button>
+    </div>
+
+    <div class="content">
+        <img class="main-image" src="fon-black.png">
+        <img class="overlay-image" id="overlay" src="" alt="">
+        <p id="date-text" class="overlay-text"></p> <!-- Добавленный элемент для текста -->
+    </div>
+
+    <div class="date-picker">
+        <label for="date">Виберіть дату:</label>
+        <select id="date" onchange="updateOverlay()">
+            <option value="">-- Вибрати --</option>
+            <option value="2023-02-03">3 лютого 2023</option>
+            <option value="2024-05-23">23 травня 2024</option>
+            <option value="2024-07-22">22 липня 2024</option>
+            <option value="2025-02-01">1 лютого 2025</option>
+            <option value="2025-03-07">7 березня 2025</option>
+        </select>
+        <p id="date-text"></p> <!-- Добавленный элемент для текста -->
+    </div>
+
+    <script>
+        function updateOverlay() {
+            const date = document.getElementById("date").value;
+            const overlay = document.getElementById("overlay");
+            const dateText = document.getElementById("date-text");
+
+            if (date) {
+                overlay.classList.remove('fade-in');
+                overlay.classList.add('fade-out');
+                setTimeout(() => {
+                    overlay.src = `images/${date}.png`; // Подставляем путь к изображению по дате
+                    overlay.classList.remove('fade-out');
+                    overlay.classList.add('fade-in');
+                }, 500); // Ждем завершения анимации исчезновения
+
+                // Обновляем текст в зависимости от выбранной даты
+                switch (date) {
+                    case "2023-02-03":
+                        dateText.textContent = "Зірки в день коли ми почали зустрічатись.";
+                        break;
+                    case "2024-05-23":
+                        dateText.textContent = "Зірки в день твого дня народження, коли ходили на прокол.";
+                        break;
+                    case "2024-07-22":
+                        dateText.textContent = "Зірки в день коли ми разом були в шацьку.";
+                        break;
+                    case "2025-02-01":
+                        dateText.textContent = "Зірки в день коли ми перший раз в Києві.";
+                        break;
+                    case "2025-03-07":
+                        dateText.textContent = "Зірки коли ми на них дивились в парку і катались на самокатіках)";
+                        break;
+                    default:
+                        dateText.textContent = "";
+                }
+            } else {
+                overlay.classList.remove('fade-in');
+                overlay.classList.add('fade-out');
+                dateText.textContent = ""; // Очищаем текст
+            }
+        }
+    </script>
+
+</body>
+
+</html>
