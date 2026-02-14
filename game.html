@@ -3964,7 +3964,8 @@
             if (item.category === 'Іграшки') newItem.classList.add('toy');
             newItem.style.backgroundImage = (item.category === 'Іграшки')
                 ? `url('shop/toy_${item.id}.png')`
-                : `url('shop/${item.category.toLowerCase()}_${item.id}.png')`;
+                : `url('shop/${getLatinCategory(item.category)}_${item.id}.png')`;
+
             newItem.style.position = 'absolute';
             newItem.style.left = `${50 + position * 50}px`;
             newItem.style.top = `50px`;
