@@ -1627,6 +1627,18 @@
             } catch (e) {}
         }
 
+        // Допоміжна функція для латинських назв категорій (для файлів)
+        function getLatinCategory(cat) {
+            const map = {
+                'Тумбочки': 'Tumbochky',
+                'Картини': 'Kartyny',
+                'Лампи': 'Lampy',
+                'Миски': 'Mysky',
+                'Іграшки': 'toy'
+            };
+            return map[cat] || cat.toLowerCase();
+        }
+
         function restorePlacedItems(items) {
             if (!Array.isArray(items)) return;
             
@@ -1647,7 +1659,7 @@
 
                 el.style.backgroundImage = (item.category === 'Іграшки')
                     ? `url('shop/toy_${item.id}.png')`
-                    : `url('shop/${item.category}_${item.id}.png')`;
+                    : `url('shop/${getLatinCategory(item.category)}_${item.id}.png')`;
                 
                 el.style.left = item.left;
                 el.style.top = item.top;
@@ -3227,10 +3239,10 @@
             if (category === 'Іграшки') image.classList.add('toy');
             if (category === 'Фарм') {
                 let imageName = '';
-                if (item.id === 1) imageName = `Фарм-4.png`;
-                else if (item.id === 2) imageName = `ФармК-4.png`;
-                else if (item.id === 3) imageName = `Гриб-4.png`;
-                else imageName = `Фарм-${item.id}.png`;
+                if (item.id === 1) imageName = `Farm-4.png`;
+                else if (item.id === 2) imageName = `FarmK-4.png`;
+                else if (item.id === 3) imageName = `Grib-4.png`;
+                else imageName = `Farm-${item.id}.png`;
                 image.style.backgroundImage = `url('shop/${imageName}')`;
             } else if (category === 'Таємна') {
                 if (item.id === 1) {
@@ -3238,12 +3250,12 @@
                 } else if (item.id === 2) {
                     image.style.backgroundImage = `url('shop/img-baby.png')`;
                 } else {
-                    image.style.backgroundImage = `url('shop/${category.toLowerCase()}_${item.id}.png')`;
+                    image.style.backgroundImage = `url('shop/${getLatinCategory(category)}_${item.id}.png')`;
                 }
             } else {
                 image.style.backgroundImage = isFood
                     ? `url('shop/food_${item.id}.png')`
-                    : (category === 'Іграшки' ? `url('shop/toy_${item.id}.png')` : `url('shop/${category.toLowerCase()}_${item.id}.png')`);
+                    : (category === 'Іграшки' ? `url('shop/toy_${item.id}.png')` : `url('shop/${getLatinCategory(category)}_${item.id}.png')`);
             }
 
             const infoContainer = document.createElement('div');
@@ -4168,10 +4180,10 @@
         let flowerCurrentStage = 0;
         let flowerNextTs = 0;
         const flowerImages = [
-            'shop/Фарм_1.png',
-            'shop/Фарм-2.png',
-            'shop/Фарм-3.png',
-            'shop/Фарм-4.png'
+            'shop/Farm_1.png',
+            'shop/Farm-2.png',
+            'shop/Farm-3.png',
+            'shop/Farm-4.png'
         ];
 
         // === Зупинка всіх анімацій Фарм ===
@@ -4274,10 +4286,10 @@
         let cactusCurrentStage = 0;
         let cactusNextTs = 0;
         const cactusImages = [
-            'shop/ФармК-1.png',
-            'shop/ФармК-2.png',
-            'shop/ФармК-3.png',
-            'shop/ФармК-4.png'
+            'shop/FarmK-1.png',
+            'shop/FarmK-2.png',
+            'shop/FarmK-3.png',
+            'shop/FarmK-4.png'
         ];
 
         function startCactusGallery() {
