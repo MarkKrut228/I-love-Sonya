@@ -1570,7 +1570,7 @@
         cat.style.top = `${startY}px`;
         const babyCat = document.querySelector('.baby-cat');
         const babyHearts = document.getElementById('babyHearts');
-        let coins = 50;
+        let coins = 5550;
         let isSecretUnlocked = false;
         const SECRET_UNLOCK_PRICE = 111;
         const BOWL_FEED_COST = 10;
@@ -3332,6 +3332,7 @@
                                     if (bh) bh.style.display = 'none';
                                 }
                             }
+                            saveGameState();
                             loadCategoryItems(category);
                         });
                     };
@@ -3506,29 +3507,50 @@
                 registerPurchaseForTask(category);
                 return;
             } else {
-                saveGameState();
-                currentItem = document.createElement('div');
-                currentItem.className = 'placed-item';
-                currentItem.dataset.category = category;
-                currentItem.dataset.id = itemId;
-                if (category === 'Тумбочки') currentItem.classList.add('tumb');
-                if (category === 'Картини') {
-                    currentItem.classList.add('picture');
-                    currentItem.style.transform = getPictureRotation(itemId);
+                if (category === 'Тумбочки') {
+                    // Додаємо тумбочку до списку куплених предметів, щоб isTumbPurchased() повернув true
+                    purchasedItems.push({ category: category, id: itemId });
+                    
+                    currentItem = document.createElement('div');
+                    currentItem.className = 'placed-item';
+                    currentItem.dataset.category = category;
+                    currentItem.dataset.id = itemId;
+                    currentItem.classList.add('tumb');
+                    currentItem.style.backgroundImage = `url('shop/${getLatinCategory(category)}_${itemId}.png')`;
+                    currentItem.style.left = `${window.innerWidth / 2 - 50}px`;
+                    currentItem.style.top = `${window.innerHeight / 2 - 50}px`;
+                    document.body.appendChild(currentItem);
+                    addMovementButtons(currentItem);
+                    const placementControls = document.getElementById('placementControls');
+                    placementControls.style.display = 'flex';
+                    registerPurchaseForTask(category);
+                    saveGameState(); // Зберігаємо стан гри, включаючи оновлений purchasedItems
+                } else {
+                    // Додаємо предмет до списку куплених предметів
+                    purchasedItems.push({ category: category, id: itemId });
+
+                    currentItem = document.createElement('div');
+                    currentItem.className = 'placed-item';
+                    currentItem.dataset.category = category;
+                    currentItem.dataset.id = itemId;
+                    if (category === 'Тумбочки') currentItem.classList.add('tumb');
+                    if (category === 'Картини') {
+                        currentItem.classList.add('picture');
+                        currentItem.style.transform = getPictureRotation(itemId);
+                    }
+                    if (category === 'Іграшки') currentItem.classList.add('toy');
+                    currentItem.style.backgroundImage = (category === 'Іграшки')
+                        ? `url('shop/toy_${itemId}.png')`
+                        : `url('shop/${getLatinCategory(category)}_${itemId}.png')`;
+                    currentItem.style.left = `${window.innerWidth / 2 - 50}px`;
+                    currentItem.style.top = `${window.innerHeight / 2 - 50}px`;
+                    document.body.appendChild(currentItem);
+                    addMovementButtons(currentItem);
+                    const placementControls = document.getElementById('placementControls');
+                    placementControls.style.display = 'flex';
+                    registerPurchaseForTask(category);
+                    saveGameState();
                 }
-                if (category === 'Іграшки') currentItem.classList.add('toy');
-                currentItem.style.backgroundImage = (category === 'Іграшки')
-                    ? `url('shop/toy_${itemId}.png')`
-                    : `url('shop/${getLatinCategory(category)}_${itemId}.png')`;
-                currentItem.style.left = `${window.innerWidth / 2 - 50}px`;
-                currentItem.style.top = `${window.innerHeight / 2 - 50}px`;
-                document.body.appendChild(currentItem);
-
-                addMovementButtons(currentItem);
-
-                const placementControls = document.getElementById('placementControls');
-                placementControls.style.display = 'flex';
-                registerPurchaseForTask(category);
             }
         }
 
@@ -3542,7 +3564,7 @@
             currentBowl = document.createElement('img');
             currentBowl.id = 'bowl';
             currentBowl.src = `shop/Mysky_${itemId}.png`;
-            currentBowl.alt = 'Mysky';
+            currentBowl.alt = 'Миска';
             currentBowl.style.position = 'absolute';
             currentBowl.style.bottom = '10px';
             currentBowl.style.right = '10px';
@@ -3965,7 +3987,6 @@
             newItem.style.backgroundImage = (item.category === 'Іграшки')
                 ? `url('shop/toy_${item.id}.png')`
                 : `url('shop/${getLatinCategory(item.category)}_${item.id}.png')`;
-
             newItem.style.position = 'absolute';
             newItem.style.left = `${50 + position * 50}px`;
             newItem.style.top = `50px`;
@@ -4127,14 +4148,23 @@
         }
 
         function getPlacedItemElement(category, id) {
-            // Пошук елемента в кімнаті за backgroundImage
+            // Пошук елемента в кімнаті за data-атрибутами (найбільш надійний спосіб)
             const all = document.querySelectorAll('.placed-item');
+            for (const el of all) {
+                if (el.dataset.category === category && parseInt(el.dataset.id) === parseInt(id)) {
+                    return el;
+                }
+            }
+            
+            // Fallback: Пошук елемента в кімнаті за backgroundImage
             for (const el of all) {
                 // Виправлення: для іграшок шукаємо toy_X.png
                 if (category === 'Іграшки') {
                     if (el.style.backgroundImage.includes(`toy_${id}.png`)) return el;
                 } else {
-                    if (el.style.backgroundImage.includes(`${category.toLowerCase()}_${id}.png`)) return el;
+                    // Використовуємо getLatinCategory для правильного пошуку назви файлу
+                    const latinCat = getLatinCategory(category);
+                    if (el.style.backgroundImage.includes(`${latinCat}_${id}.png`) || el.style.backgroundImage.includes(`${category.toLowerCase()}_${id}.png`)) return el;
                 }
             }
             return null;
