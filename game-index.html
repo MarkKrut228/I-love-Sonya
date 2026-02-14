@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Loading</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            background: url('photo/fon-loading.jpeg') no-repeat center center/cover;
+            background-color: rgba(0, 0, 0, 0.5);
+            background-blend-mode: darken;
+            color: white;
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        .loading-text {
+            font-size: 32px;
+            font-weight: bold;
+            color: #ffd700;
+            text-shadow: 2px 2px 10px rgba(255, 215, 0, 0.8);
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .loading-text::after {
+            content: '...';
+            display: inline-block;
+            animation: dots 1.5s steps(3, end) infinite;
+        }
+
+        @keyframes dots {
+            0% {
+                content: '';
+            }
+
+            33% {
+                content: '.';
+            }
+
+            66% {
+                content: '..';
+            }
+
+            100% {
+                content: '...';
+            }
+        }
+
+        .play-button {
+            padding: 15px 30px;
+            font-size: 20px;
+            background-color: #ff9800;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 10px;
+            font-family: 'Press Start 2P', cursive;
+            transition: transform 0.3s ease;
+        }
+
+        .play-button:hover {
+            background-color: #e68900;
+        }
+
+        /* Стилі для повідомлення про поворот екрану */
+        .rotate-screen-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: url('photo/vertically.jpg') no-repeat center center;
+            background-size: cover;
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .rotate-screen-message {
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 16px;
+            max-width: 80%;
+        }
+
+        @media (max-width: 600px) {
+            .loading-text {
+                font-size: 22px;
+            }
+
+            .play-button {
+                font-size: 22px;
+                transform: scale(1.1);
+            }
+        }
+
+        /* Показуємо повідомлення про поворот тільки в горизонтальному режимі */
+        @media (orientation: landscape) and (max-height: 600px) {
+            .rotate-screen-overlay {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Повідомлення про поворот екрану -->
+    <div class="rotate-screen-overlay" id="rotateScreenOverlay">
+        <div class="rotate-screen-message">
+            Будь ласка, поверніть телефон вертикально
+        </div>
+    </div>
+
+    <div class="loading-text">Завантаження</div>
+    <button class="play-button" onclick="startGame()">▶ Play</button>
+
+    <script>
+        // Функція для перевірки орієнтації екрану
+        function checkOrientation() {
+            const overlay = document.getElementById('rotateScreenOverlay');
+            
+            // Перевіряємо чи екран горизонтальний і чи це мобільний пристрій
+            if (window.innerHeight < window.innerWidth && window.innerHeight < 600) {
+                overlay.style.display = 'flex';
+            } else {
+                overlay.style.display = 'none';
+            }
+        }
+
+        // Перевіряємо орієнтацію при завантаженні
+        window.addEventListener('load', checkOrientation);
+        
+        // Перевіряємо орієнтацію при зміні розміру вікна
+        window.addEventListener('resize', checkOrientation);
+        
+        // Перевіряємо орієнтацію при зміні орієнтації (для мобільних пристроїв)
+        window.addEventListener('orientationchange', function() {
+            setTimeout(checkOrientation, 100);
+        });
+
+        async function startGame() {
+            try {
+                // Перевіряємо чи екран вертикальний перед запуском гри
+                if (window.innerHeight < window.innerWidth && window.innerHeight < 600) {
+                    alert('Будь ласка, поверніть телефон вертикально для гри');
+                    return;
+                }
+
+                // Перехід у повноекранний режим
+                if (document.documentElement.requestFullscreen) {
+                    await document.documentElement.requestFullscreen();
+                } else if (document.documentElement.mozRequestFullScreen) {
+                    await document.documentElement.mozRequestFullScreen();
+                } else if (document.documentElement.webkitRequestFullscreen) {
+                    await document.documentElement.webkitRequestFullscreen();
+                } else if (document.documentElement.msRequestFullscreen) {
+                    await document.documentElement.msRequestFullscreen();
+                }
+
+                // Блокування екрану в горизонтальному режимі
+                if (screen.orientation && screen.orientation.lock) {
+                    await screen.orientation.lock("landscape");
+                }
+
+                // Перехід до гри
+                window.location.href = "game.html";
+            } catch (err) {
+                console.log("Помилка зміни орієнтації або повноекранного режиму:", err);
+                window.location.href = "game.html"; // Все одно переходимо в гру
+            }
+        }
+    </script>
+</body>
+
+</html>

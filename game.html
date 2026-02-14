@@ -1,0 +1,4528 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <title>Game Cats</title>
+    <style>
+        @font-face {
+            font-family: 'Press Start 2P', cursive;
+            src: url('fonts/pixel.ttf') format('truetype');
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            background: url('photo/fon-game.png') no-repeat center center;
+            background-size: cover;
+            overflow: hidden;
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        /* Верхнє меню */
+        .top-menu {
+            width: 100%;
+            height: 50px;
+            background-color: #222;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.7);
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 100;
+        }
+
+        .menu-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .menu-button {
+            background: linear-gradient(145deg, #ff8c00, #ff6b00);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-family: 'Press Start 2P', cursive;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            text-shadow: 1px 1px 2px #000;
+        }
+
+        .menu-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .menu-button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .balance {
+            color: white;
+            font-size: 18px;
+            font-family: 'Press Start 2P', cursive;
+            text-shadow: 2px 2px 4px #000;
+            display: flex;
+            /* Додаємо flex-контейнер */
+            align-items: center;
+            /* Вирівнюємо елементи по вертикалі */
+            gap: 5px;
+            /* Відступ між елементами */
+            line-height: 1.2;
+            /* Фіксуємо висоту рядка */
+        }
+
+        @media (max-width: 600px) {
+            .top-menu {
+                flex-direction: column;
+                height: auto;
+                padding: 10px 0;
+                align-items: center;
+            }
+
+            .menu-button {
+                width: 90%;
+                margin: 5px 0;
+                font-size: 14px;
+            }
+
+            .balance {
+                font-size: 16px;
+            }
+        }
+
+        .cat {
+            position: absolute;
+            width: 110px;
+            height: 118px;
+            background: url('photo/cat-game.png') no-repeat;
+            background-size: 480px 960px;
+            image-rendering: pixelated;
+            transition: transform 0.5s linear, left 0.5s linear, top 0.5s linear;
+            z-index: 5;
+            filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.5));
+        }
+
+        .black-cat {
+            position: absolute;
+            width: 122px;
+            height: 122px;
+            background: url('photo/cat-black.png') no-repeat;
+            background-size: 488px 976px;
+            background-position: 0 0;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            transition: transform 0.5s linear, left 0.5s linear, top 0.5s linear;
+            z-index: 5;
+            filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.5));
+        }
+
+        .baby-cat {
+    position: absolute;
+    width: 122px;
+    height: 122px;
+    background: url('photo/cat-baby.png') no-repeat;
+    background-size: 488px 976px; /* 4 кадри × 8 рядків (як у чорного кота) */
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    transition: transform 0.5s linear, left 0.5s linear, top 0.5s linear;
+    z-index: 5;
+    filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.5));
+}
+
+        
+
+        #bowl {
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+            user-select: none;
+            -webkit-user-drag: none;
+            filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.5));
+        }
+
+        .status-bars {
+            position: absolute;
+            top: 65px;
+            left: 1px;
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            z-index: 100;
+            filter: drop-shadow(2px 4px 4px rgba(0, 0, 0, 0.5));
+        }
+
+        .emote {
+            position: absolute;
+            font-size: 28px;
+            z-index: 999;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            filter: drop-shadow(2px 4px 4px rgba(0, 0, 0, 0.7));
+        }
+
+        .emote.angry {
+            animation: angryBounce 0.5s infinite alternate;
+            top: -20px;
+            left: 35px;
+        }
+
+        .emote.sleep {
+            animation: sleepZzz 2s infinite linear;
+            top: -20px;
+            left: 40px;
+        }
+        .baby-hearts {
+            position: absolute;
+            z-index: 999;
+            pointer-events: none;
+            transform: translate(-50%, -100%);
+            display: none;
+        }
+
+        /* Стилі для магазину */
+        .shop-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .shop-container {
+            width: 90%;
+            max-width: 800px;
+            height: 80%;
+            background: linear-gradient(145deg, #2a2a2a, #1f1f1f);
+            border: 4px solid #8a2be2;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6),
+                0 0 0 2px #ff8c00,
+                0 0 0 4px #8a2be2;
+            transform: scale(0.95);
+            transition: all 0.3s ease;
+        }
+
+        .shop-overlay.show .shop-container {
+            transform: scale(1);
+        }
+
+        .shop-header {
+            background: linear-gradient(to right, #8a2be2, #4b0082);
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            border-bottom: 3px solid #ff8c00;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+        }
+
+
+        .shop-header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 1px;
+            width: 100%;
+        }
+
+        .shop-header-top .balance {
+            font-size: 14px;
+            color: white;
+            flex: 1;
+            text-align: left;
+        }
+
+        .shop-title {
+            background: linear-gradient(145deg, #ff8c00, #ff6b00);
+            color: white;
+            font-size: 14px;
+            padding: 10px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            text-shadow: 1px 1px 2px #000;
+            border: 2px solid #8a2be2;
+            margin: 0 10px;
+            text-align: center;
+            flex: 2;
+        }
+
+        .shop-title:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+
+
+        .categories-container {
+            display: flex;
+            overflow-x: auto;
+            gap: 10px;
+            padding: 10px 1px;
+            scrollbar-width: thin;
+            scrollbar-color: #8a2be2 #333;
+        }
+
+        .categories-container::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .categories-container::-webkit-scrollbar-track {
+            background: #333;
+            border-radius: 3px;
+        }
+
+        .categories-container::-webkit-scrollbar-thumb {
+            background: linear-gradient(#8a2be2, #4b0082);
+            border-radius: 3px;
+        }
+
+        .category {
+            background: linear-gradient(145deg, #3a3a3a, #2d2d2d);
+            border: 2px solid #8a2be2;
+            border-radius: 8px;
+
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            flex-shrink: 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            position: relative;
+            margin-right: 8px;
+            min-width: 120px;
+            min-height: 40px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+        }
+
+        .category:last-child {
+            margin-right: 0;
+        }
+
+        .category.locked {
+            background: linear-gradient(145deg, #555, #333) !important;
+            border-color: #888 !important;
+            color: #bbb !important;
+            cursor: not-allowed !important;
+            opacity: 1 !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10);
+            min-width: 120px;
+            min-height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+        }
+
+        .category.locked .lock-icon {
+            display: inline-block;
+            font-size: 16px;
+            vertical-align: middle;
+            margin-right: 0;
+        }
+
+        .category:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: -5px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1px;
+            height: 60%;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .category:hover {
+            background: linear-gradient(145deg, #4a4a4a, #3d3d3d);
+            transform: translateY(-2px);
+        }
+
+        .category.active {
+            background: linear-gradient(145deg, #8a2be2, #4b0082);
+            border-color: #ff8c00;
+            box-shadow: 0 0 10px rgba(138, 43, 226, 0.7);
+        }
+
+        .close-shop {
+            background: #ff4444;
+            border: none;
+            color: white;
+            font-size: 24px;
+            /* Збільшений розмір */
+            font-weight: bold;
+            /* Жирний шрифт */
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            text-shadow: 1px 1px 2px #000;
+            flex: 0 0 auto;
+            /* Фіксована ширина */
+            width: 44px;
+            /* Збільшена ширина */
+            height: 44px;
+            /* Збільшена висота */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: -1px;
+            /* Відступ зліва */
+            position: relative;
+            /* Для точного позиціонування */
+            right: 0;
+            /* Фіксуємо праворуч */
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+        }
+
+        /* Збільшений хрестик при наведенні */
+        .close-shop:hover {
+            background: #ff0000;
+            transform: rotate(90deg) scale(1.1);
+            /* Додано масштабування */
+        }
+
+        /* Стилі для роздільної лінії */
+        .divider {
+            height: 2px;
+            background: linear-gradient(to right, transparent, #8a2be2, #ff8c00, #8a2be2, transparent);
+            margin: 5px 0;
+            width: 100%;
+        }
+
+        .shop-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            padding: 15px;
+            overflow-y: auto;
+            height: calc(100% - 150px);
+        }
+
+        .shop-item {
+            background: linear-gradient(145deg, #3a3a3a, #2d2d2d);
+            border: 2px solid #8a2be2;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            /* Зміна з row на column */
+            align-items: center;
+            /* Центруємо по горизонталі */
+            text-align: center;
+            /* Центруємо текст */
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            min-height: 210px;
+            height: auto;
+            width: 90%;
+            /* Додаємо ширину для кращого вигляду */
+            max-width: 400px;
+            /* Максимальна ширина */
+            margin: 0 auto;
+            /* Центруємо блок товару */
+        }
+
+        .shop-item::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(to bottom right,
+                    rgba(138, 43, 226, 0.1),
+                    rgba(255, 140, 0, 0.1));
+            transform: rotate(45deg);
+            z-index: 0;
+        }
+
+        .shop-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+            border-color: #ff8c00;
+        }
+
+        /* Адаптація для мобільних пристроїв */
+        @media (max-width: 600px) {
+            .shop-content {
+                padding: 10px;
+                gap: 10px;
+            }
+
+            .shop-item {
+                margin-bottom: 10px;
+            }
+
+            .close-shop {
+                font-size: 20px;
+                width: 40px;
+                height: 40px;
+            }
+        }
+
+        .item-image {
+            width: 120px;
+            height: 120px;
+            background-color: #222; /* темний фон, щоб не було прозорого */
+            margin-right: 20px;
+            border: 3px solid #555;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+            flex-shrink: 0;
+            background-size: contain;      /* показує всю картинку */
+            background-repeat: no-repeat;  /* не повторює */
+            background-position: center;
+        }
+
+        .item-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* Центруємо вміст */
+            width: 100%;
+            /* Займає всю ширину батьківського елементу */
+        }
+
+        .item-name {
+            color: white;
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-align: center;
+            /* Центруємо текст */
+            z-index: 1;
+            text-shadow: 1px 1px 2px #000;
+            width: 100%;
+            /* Займає всю доступну ширину */
+        }
+
+        .item-price {
+            color: #ff8c00;
+            font-size: 16px;
+            margin-bottom: 15px;
+            z-index: 1;
+            text-shadow: 1px 1px 2px #000;
+            text-align: center;
+            /* Центруємо текст */
+        }
+
+        .buy-button {
+            background: linear-gradient(145deg, #8a2be2, #4b0082);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            text-shadow: 1px 1px 2px #000;
+            border: 1px solid #ff8c00;
+            z-index: 1;
+            width: auto;
+            /* Зміна з 100% на auto */
+            max-width: 200px;
+            margin: 0 auto;
+            /* Центруємо кнопку */
+        }
+
+        .buy-button:hover {
+            background: linear-gradient(145deg, #9932cc, #5a1d9c);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        .buy-button:active {
+            transform: translateY(1px);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .buy-button.loading {
+            position: relative;
+            color: transparent;
+            pointer-events: none;
+        }
+
+        .buy-button.loading::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        @keyframes angryBounce {
+            from {
+                transform: translateY(0);
+            }
+
+            to {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes sleepZzz {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-30px);
+                opacity: 0;
+            }
+        }
+
+        /* Смуга прокрутки */
+        .shop-content::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .shop-content::-webkit-scrollbar-track {
+            background: #333;
+            border-radius: 5px;
+        }
+
+        .shop-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(#8a2be2, #4b0082);
+            border-radius: 5px;
+            border: 1px solid #ff8c00;
+        }
+
+        .shop-content::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(#9932cc, #5a1d9c);
+        }
+
+        /* Стилі для вікна завдань */
+        .tasks-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .tasks-container {
+            width: 90%;
+            max-width: 600px;
+            height: 70%;
+            background: linear-gradient(145deg, #2a2a2a, #1f1f1f);
+            border: 4px solid #ff8c00;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6),
+                0 0 0 2px #8a2be2,
+                0 0 0 4px #ff8c00;
+        }
+
+        .tasks-header {
+            background: linear-gradient(to right, #ff8c00, #ff6b00);
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #8a2be2;
+        }
+
+        .tasks-title {
+            color: white;
+            font-size: 18px;
+            text-align: center;
+            flex-grow: 1;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .close-tasks {
+            background: #8a2be2;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .tasks-content {
+            padding: 20px;
+            overflow-y: auto;
+            background: rgba(30, 30, 30, 0.7);
+        }
+
+        .task-item {
+            background: rgba(50, 50, 50, 0.7);
+            border: 2px solid #8a2be2;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .task-info {
+            flex-grow: 1;
+        }
+
+        .task-name {
+            color: white;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .task-reward {
+            color: #ff8c00;
+            font-size: 12px;
+        }
+
+        .task-button {
+            background: linear-gradient(145deg, #8a2be2, #4b0082);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            cursor: pointer;
+        }
+
+        /* Адаптація для мобільних пристроїв */
+        @media (max-width: 600px) {
+            .shop-item {
+                flex-direction: column;
+                padding: 15px;
+            }
+
+            .item-image {
+                width: 100px;
+                height: 100px;
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+
+            .buy-button {
+                max-width: 100%;
+                width: 100%;
+            }
+        }
+
+        /* Смуга прокрутки */
+        .shop-content::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        .shop-content::-webkit-scrollbar-track {
+            background: #333;
+            border-radius: 6px;
+        }
+
+        .shop-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(#8a2be2, #4b0082);
+            border-radius: 6px;
+            border: 2px solid #ff8c00;
+        }
+
+        .shop-content::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(#9932cc, #5a1d9c);
+        }
+
+        /* Стилі для кнопки завантаження */
+        .buy-button.loading {
+            position: relative;
+            color: transparent;
+            pointer-events: none;
+        }
+
+        .buy-button.loading::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        /* Стилі для категорії корму */
+        .food-category .item-image {
+            background-color: #8a5a44;
+            border-color: #6d4c3a;
+        }
+
+        .placement-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1002;
+        }
+
+        .placement-container {
+            background: #222;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+            width: 80%;
+            max-width: 400px;
+        }
+
+        .placement-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .placement-grid div {
+            background: #444;
+            border: 2px solid #8a2be2;
+            border-radius: 5px;
+            height: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .placement-grid div:hover {
+            background: #555;
+            border-color: #ff8c00;
+        }
+
+        .cancel-placement {
+            background: #ff4444;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cancel-placement:hover {
+            background: #ff0000;
+        }
+
+        .placement-controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 1003;
+        }
+
+        .placement-button {
+            background: #0da33d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Press Start 2P', cursive;
+            transition: all 0.3s ease;
+        }
+
+        .placement-button:hover {
+            background: #6d1dbb;
+        }
+
+        .placement-button.cancel {
+            background: #ff4444;
+        }
+
+        .placement-button.cancel:hover {
+            background: #ff0000;
+        }
+
+        .placed-item {
+            position: absolute;
+            width: 60px;
+            height: 85px;
+            background-size: cover;
+            background-position: center;
+            z-index: 1;
+            cursor: move;
+        }
+
+        .move-button {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            z-index: 6;
+            transition: all 0.3s ease;
+            margin: 580px 6px 1px 1px;
+            /* верх, право, низ, ліво */
+        }
+
+        .move-button:hover {
+            background: #45a049;
+        }
+
+        .placed-item.tumb {
+            width: 90px;
+            height: 90px;
+        }
+
+        .placed-item.picture {
+            width: 70px;
+            height: 90px;
+        }
+
+        .item-image.picture {
+            box-shadow: 6px 10px 24px 0 rgba(60, 40, 20, 0.32);
+            border-radius: 8px;
+            background-color: transparent;
+            position: relative;
+        }
+
+
+        .item-image.picture::after {
+            content: '';
+            position: absolute;
+            left: 12px;
+            right: 12px;
+            top: 12px;
+            bottom: 12px;
+            border-radius: 8px;
+            box-shadow: 6px 10px 24px 0 rgba(60, 40, 20, 0.32);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .item-image.picture {
+            position: relative;
+            z-index: 1;
+        }
+
+        .placed-item.toy {
+            width: 50px;
+            height: 50px;
+        }
+
+        .shop-item.purchased {
+            opacity: 0.7;
+        }
+
+        .purchased-label {
+            color: #fff;
+            background: #4caf50;
+            border-radius: 6px;
+            padding: 6px 14px;
+            font-size: 13px;
+            font-family: 'Press Start 2P', cursive;
+            margin-bottom: 8px;
+            margin-top: 8px;
+            display: inline-block;
+        }
+
+        .delete-button {
+            background: #ff4444 !important;
+            color: #fff !important;
+            z-index: 10000 !important;
+            position: relative !important;
+            min-height: 32px !important;
+            font-size: 18px !important;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 14px;
+            font-size: 13px;
+            font-family: 'Press Start 2P', cursive;
+            cursor: pointer;
+            margin-top: 6px;
+            display: block;
+            transition: background 0.2s;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .delete-button:hover {
+            background: #c62828;
+        }
+
+        .shop-item.purchased {
+            min-height: 255px;
+        }
+
+        /* Для мисок не збільшуємо розмір навіть якщо куплено */
+        .shop-item.purchased.food-category,
+        .shop-item.purchased:not(.food-category):has(.item-name:contains('Миски')) {
+            min-height: 210px !important;
+        }
+
+        .shop-item.purchased.miska {
+            min-height: 210px !important;
+        }
+
+        .delete-modal-content {
+            background: #222;
+            color: #fff;
+            border-radius: 16px;
+            padding: 28px 18px 22px 18px;
+            min-width: 220px;
+            max-width: 260px;
+            width: 92vw;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7), 0 0 0 3px #ff8c00, 0 0 0 6px #8a2be2;
+            border: 3px solid #ff8c00;
+            text-align: center;
+            font-family: 'Press Start 2P', cursive;
+            position: relative;
+            margin: 0 auto;
+            font-size: 15px;
+        }
+
+        .delete-modal-title {
+            font-size: 15px;
+            margin-bottom: 22px;
+            font-family: 'Press Start 2P', cursive;
+            color: #fff;
+            text-shadow: 2px 2px 4px #000;
+            word-break: break-word;
+        }
+
+        .delete-modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+        }
+
+        .delete-modal-btn {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 13px;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 28px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            transition: background 0.2s, color 0.2s, transform 0.2s;
+            outline: none;
+        }
+
+        .delete-modal-btn.yes {
+            background: linear-gradient(145deg, #ff8c00, #ff4444);
+            color: #fff;
+            border: 2px solid #ff8c00;
+            text-shadow: 1px 1px 2px #000;
+        }
+
+        /* Стилі для кнопки інфо у розділі Фарм */
+        .farm-info-btn {
+            background: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-left: 8px;
+            font-family: 'Press Start 2P', cursive;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            vertical-align: middle;
+            transition: background 0.2s;
+        }
+
+        .farm-info-btn:hover {
+            background: #357abd;
+        }
+
+        .buy-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .delete-modal-btn.yes:hover {
+            background: linear-gradient(145deg, #ff4444, #ff8c00);
+            color: #fff;
+            transform: scale(1.05);
+        }
+
+        .delete-modal-btn.no {
+            background: #444;
+            color: #fff;
+            border: 2px solid #8a2be2;
+            text-shadow: 1px 1px 2px #000;
+        }
+
+        .delete-modal-btn.no:hover {
+            background: #8a2be2;
+            color: #fff;
+            transform: scale(1.05);
+        }
+
+        /* Стилі для повідомлення про поворот екрану */
+        .rotate-screen-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: url('photo/vertically.png') no-repeat center center;
+            background-size: cover;
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .rotate-screen-message {
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 16px;
+            max-width: 80%;
+        }
+
+        /* Показуємо повідомлення про поворот тільки в горизонтальному режимі */
+        @media (orientation: landscape) and (max-height: 600px) {
+            .rotate-screen-overlay {
+                display: flex;
+            }
+        }
+
+        /* Стилі для кнопки Урожай */
+        .harvest-button {
+            background: #ff9800;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            transition: background 0.2s;
+        }
+
+        .harvest-button:hover {
+            background: #e68900;
+        }
+
+        .placed-item.farm {
+            width: 100px !important;
+            height: 155px !important;
+            background-size: contain !important;
+            background-repeat: no-repeat;
+            background-position: center;
+            overflow: visible !important;
+            margin-bottom: 10px;
+            z-index: 2;
+        }
+
+        .flower-img {
+            width: 50px;
+            height: 85px;
+            object-fit: contain;
+            transition: filter 0.3s;
+            z-index: 3;
+        }
+
+        .harvest-flower-btn {
+            background: #ff9800;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 7px 10px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 11px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            transition: background 0.2s;
+            z-index: 3;
+            margin-top: 32px;
+            /* Більший відступ, щоб кнопка була нижче квітки */
+        }
+
+        .harvest-flower-btn:hover {
+            background: #e68900;
+        }
+
+        .flower-img.small {
+            width: 35px;
+            height: 50px;
+            z-index: 3;
+        }
+
+        .cactus-img.small {
+            width: 31px;
+            height: 26px;
+            margin-left: 4px;
+            z-index: 3;
+            margin-top: 10px;
+        }
+
+        .cactus-img.stage2 {
+            width: 26px;
+            height: 36px;
+            margin-left: 4px;
+            z-index: 3;
+        }
+
+        .cactus-img.stage3 {
+            width: 27px;
+            height: 53px;
+            margin-left: 5px;
+            z-index: 3;
+        }
+
+        .cactus-img.stage4 {
+            width: 40px;
+            height: 65px;
+            margin-left: 18px;
+            z-index: 3;
+        }
+
+        /* Модальне вікно для повідомлення про розблокування Фарм */
+        #farmLockModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #farmLockModal .modal-content {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #farmLockModal img {
+            max-width: 90vw;
+            max-height: 60vh;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+        }
+
+        #farmLockModal .modal-text {
+            position: absolute;
+            top: 32%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #000000;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 16px;
+            text-align: center;
+            padding: 10px 20px;
+            border-radius: 10px;
+            pointer-events: none;
+        }
+
+        .category .farm-text {
+            font-size: 12px;
+            color: inherit;
+            font-family: inherit;
+            font-weight: normal;
+            letter-spacing: inherit;
+            margin: 0 2px;
+        }
+
+        #farmLockModal .ok-overlay-btn {
+            position: absolute;
+            left: 48%;
+            top: 80%;
+            /* підлаштувати під розташування кнопки Ok на фото */
+            transform: translate(-50%, -50%);
+            width: 120px;
+            /* підлаштувати під розмір кнопки Ok на фото */
+            height: 42px;
+            background: none;
+            border: none;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        /* Додаю стилі для вирівнювання квіточок у flowerGallery */
+        #flowerGallery {
+            min-height: 155px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            position: relative;
+            /* вже є position: absolute, якщо ні — додати */
+            position: absolute;
+        }
+
+        .flower-img {
+            position: static;
+            height: 82px;
+            width: auto;
+            object-fit: contain;
+            left: unset;
+            bottom: unset;
+            transform: none;
+        }
+
+        .harvest-flower-btn {
+            margin-top: 8px;
+        }
+
+        /* Анімація bounce для напису 'Забери урожай' */
+        @keyframes bounce-harvest-label {
+            0% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(18px);
+            }
+
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        .harvest-label {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 15px;
+            color: #ff9800;
+            margin-bottom: 18px;
+            /* Підняти вище */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 4;
+            text-shadow: 2px 2px 0 #222, -2px 2px 0 #222, 2px -2px 0 #222, -2px -2px 0 #222, 0 2px 0 #222, 2px 0 0 #222, 0 -2px 0 #222, -2px 0 0 #222;
+            animation: bounce-harvest-label 2.2s infinite;
+            position: absolute;
+            top: -38px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: max-content;
+            pointer-events: none;
+        }
+
+        /* Додаю/оновлюю CSS для .harvest-label */
+        .harvest-label {
+            position: absolute;
+            left: -74%;
+            top: auto;
+            bottom: 59%;
+            transform: translateX(-50%);
+            width: max-content;
+            pointer-events: none;
+        }
+        .harvest-label-cactus {
+            position: absolute;
+            left: -20%;
+            top: auto;
+            bottom: 47%;
+            transform: translateX(-50%);
+            font-family: 'Press Start 2P', cursive;
+            font-size: 15px;
+            color: #ff9800;
+            margin-bottom: 18px;
+            /* Підняти вище */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 4;
+            text-shadow: 2px 2px 0 #222, -2px 2px 0 #222, 2px -2px 0 #222, -2px -2px 0 #222, 0 2px 0 #222, 2px 0 0 #222, 0 -2px 0 #222, -2px 0 0 #222;
+            animation: bounce-harvest-label 2.2s infinite;
+            position: absolute;
+            width: max-content;
+            pointer-events: none;
+        }
+
+        /* Стрілочка для грибочка: по центру над грибом через флекс-колонку #flowerGallery */
+        .harvest-label-mushroom {
+            position: static;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 15px;
+            color: #ff9800;
+            margin-bottom: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 4;
+            text-shadow: 2px 2px 0 #222, -2px 2px 0 #222, 2px -2px 0 #222, -2px 0 0 #222, 0 2px 0 #222, 2px 0 0 #222, 0 -2px 0 #222, -2px 0 0 #222;
+            animation: bounce-harvest-label 2.2s infinite;
+            width: max-content;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Повідомлення про поворот екрану -->
+    <div class="rotate-screen-overlay" id="rotateScreenOverlay">
+        <div class="rotate-screen-message">
+            Будь ласка, поверніть телефон вертикально!
+        </div>
+    </div>
+
+    <!-- Верхнє меню -->
+    <div class="top-menu">
+        <div class="menu-container">
+            <div class="balance">Баланс <br> 🪙0</div>
+            <button class="menu-button" onclick="openShop()">Магазин</button>
+            <button class="menu-button" onclick="goBack()">Назад</button>
+        </div>
+        <div class="status-bars">
+            <img id="hungerBar" class="bar" src="images/hungry_0.png" style="width: 170px; height: 55px;">
+            <img id="energyBar" class="bar" src="images/energy_0.png" style="width: 170px; height: 55px;">
+        </div>
+    </div>
+    <div style="z-index: 5;" class="cat"></div>
+    <div style="z-index: 5; display: none;" class="black-cat"></div>
+    <div id="emote" class="emote"></div>
+    <div class="baby-cat" style="display: none;"></div>
+    <img id="babyHearts" class="baby-hearts" src="photo/hearts.gif" alt="hearts">
+
+    <!-- Магазин -->
+    <div class="shop-overlay" id="shopOverlay">
+        <div class="shop-container">
+            <div class="shop-header">
+                <div class="shop-header-top">
+                    <div class="balance">Баланс <br> 🪙0</div>
+                    <div class="shop-title" id="tasksButton">ЗАВДАННЯ</div>
+                    <button class="close-shop" onclick="closeShop()">✕</button>
+                </div>
+                <div class="categories-container" id="categoriesContainer">
+                    <!-- Категорії будуть додані через JavaScript -->
+                </div>
+            </div>
+            <div class="shop-content" id="shopContent">
+                <!-- Товари будуть додані через JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальне вікно для розблокування Таємної -->
+    <div id="secretUnlockModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.7); z-index:2000; justify-content:center; align-items:center; font-family: 'Press Start 2P', cursive;">
+        <div class="delete-modal-content">
+            <div class="delete-modal-title">Категорія «Таємна» заблокована</div>
+            <div class="delete-modal-title" style="font-size:14px;">Вартість розблокування: 🪙<span id="secretUnlockPriceLabel">111</span></div>
+            <div class="delete-modal-buttons">
+                <button id="secretUnlockBuyBtn" class="delete-modal-btn yes">Купити</button>
+                <button id="secretUnlockCancelBtn" class="delete-modal-btn no">Скасувати</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Вікно завдань -->
+    <div class="tasks-overlay" id="tasksOverlay">
+        <div class="tasks-container">
+            <div class="tasks-header">
+                <div class="tasks-title">ЩОДЕННІ ЗАВДАННЯ</div>
+                <button class="close-tasks" onclick="closeTasks()">✕</button>
+            </div>
+            <div class="tasks-content" id="tasksContent">
+                <!-- Завдання будуть додані через JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Вікно розміщення -->
+    <div class="placement-overlay" id="placementOverlay">
+        <div class="placement-container">
+            <h3>Виберіть місце для розміщення</h3>
+            <div class="placement-grid" id="placementGrid">
+                <!-- Клікабельні місця будуть додані через JavaScript -->
+            </div>
+            <button class="cancel-placement" onclick="cancelPlacement()">Скасувати</button>
+        </div>
+    </div>
+
+    <div class="placement-controls" id="placementControls" style="display: none;">
+        <button class="placement-button" onclick="finalizePlacement()">Готово</button>
+        <button class="placement-button cancel" onclick="cancelPlacement()">Скасувати</button>
+    </div>
+
+    <!-- Модальне вікно підтвердження видалення -->
+    <div id="deleteConfirmModal"
+        style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.7); z-index:2000; justify-content:center; align-items:center; font-family: 'Press Start 2P', cursive;">
+        <div class="delete-modal-content">
+            <div class="delete-modal-title">Ви точно хочете видалити цей предмет?</div>
+            <div class="delete-modal-buttons">
+                <button id="deleteConfirmYes" class="delete-modal-btn yes">Так</button>
+                <button id="deleteConfirmNo" class="delete-modal-btn no">Ні</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Галерея росту квіточки -->
+    <div id="flowerGallery" style="display: none; flex-direction: column; align-items: center; margin-top: 70px;"></div>
+
+    <!-- Модальне вікно для заблокованого Фарм -->
+    <div id="farmLockModal">
+        <div class="modal-content" style="position:relative;">
+            <img src="photo/cat-message.png" alt="cat-message">
+            <button class="ok-overlay-btn" onclick="closeFarmLockModal()"></button>
+            <div class="modal-text">Розблокується при покупці тумбочки.</div>
+        </div>
+    </div>
+
+    <script>
+        const cat = document.querySelector('.cat');
+        const blackCat = document.querySelector('.black-cat');
+        let isSitting = false;
+        let isLying = false;
+        let isClicked = false;
+        let frame = 0;
+        let direction = 0;
+        let speed = 0.7;
+        let lastDirection = -1;
+        let repeatMove = false;
+        let walkTimeout, restTimeout;
+
+        const startX = window.innerWidth / 2 - 48;
+        const startY = window.innerHeight * 0.7;
+        cat.style.left = `${startX}px`;
+        cat.style.top = `${startY}px`;
+        const babyCat = document.querySelector('.baby-cat');
+        const babyHearts = document.getElementById('babyHearts');
+        let coins = 0;
+        let isSecretUnlocked = false;
+        const SECRET_UNLOCK_PRICE = 111;
+        const BOWL_FEED_COST = 10;
+        const FARM_STAGE_MS = 60 * 60 * 1000;
+        const HARVEST_REWARD_FLOWER = 15;
+        const HARVEST_REWARD_CACTUS = 30;
+        const HARVEST_REWARD_MUSHROOM = 50;
+        const FALL_COIN_INTERVAL_MS = 20 * 60 * 1000;
+        const FALL_COIN_REWARD = 10;
+        function saveGameState() {
+            const placedItemsData = [];
+            document.querySelectorAll('.placed-item').forEach(el => {
+                let category = el.dataset.category;
+                let id = parseInt(el.dataset.id);
+
+                // Fallback для старих збережень
+                if (!category) {
+                    if (el.classList.contains('tumb')) category = 'Тумбочки';
+                    else if (el.classList.contains('picture')) category = 'Картини';
+                    else if (el.classList.contains('toy')) category = 'Іграшки';
+                    else category = 'Лампи';
+                }
+                if (isNaN(id)) {
+                    let bg = el.style.backgroundImage;
+                    let match = bg.match(/_(\d+)\.png/);
+                    id = match ? parseInt(match[1]) : 0;
+                }
+
+                placedItemsData.push({
+                    category: category,
+                    id: id,
+                    left: el.style.left,
+                    top: el.style.top
+                });
+            });
+
+            const state = {
+                coins,
+                isSecretUnlocked,
+                currentBowlId,
+                purchasedItems,
+                hungerStage,
+                energyStage,
+                tasksState,
+                placedItems: placedItemsData,
+                farm: {
+                    flower: { stage: typeof flowerCurrentStage !== 'undefined' ? flowerCurrentStage : 0, nextTs: typeof flowerNextTs !== 'undefined' ? flowerNextTs : 0 },
+                    cactus: { stage: typeof cactusCurrentStage !== 'undefined' ? cactusCurrentStage : 0, nextTs: typeof cactusNextTs !== 'undefined' ? cactusNextTs : 0 },
+                    mushroom: { stage: typeof mushroomCurrentStage !== 'undefined' ? mushroomCurrentStage : 0, nextTs: typeof mushroomNextTs !== 'undefined' ? mushroomNextTs : 0 }
+                }
+            };
+            try {
+                localStorage.setItem('gameState', JSON.stringify(state));
+            } catch (e) {}
+        }
+
+        function restorePlacedItems(items) {
+            if (!Array.isArray(items)) return;
+            
+            // Очищаємо існуючі розставлені предмети перед відновленням (щоб уникнути дублів)
+            document.querySelectorAll('.placed-item').forEach(el => el.remove());
+
+            items.forEach(item => {
+                const el = document.createElement('div');
+                el.className = 'placed-item';
+                el.dataset.category = item.category;
+                el.dataset.id = item.id;
+                if (item.category === 'Тумбочки') el.classList.add('tumb');
+                if (item.category === 'Картини') {
+                    el.classList.add('picture');
+                    el.style.transform = getPictureRotation(item.id);
+                }
+                if (item.category === 'Іграшки') el.classList.add('toy');
+
+                el.style.backgroundImage = (item.category === 'Іграшки')
+                    ? `url('shop/toy_${item.id}.png')`
+                    : `url('shop/${item.category}_${item.id}.png')`;
+                
+                el.style.left = item.left;
+                el.style.top = item.top;
+                el.style.position = 'absolute';
+                document.body.appendChild(el);
+
+                // Якщо це тумбочка, перевіряємо чи в ній має бути рослина
+                if (item.category === 'Тумбочки') {
+                    const farmItem = purchasedItems.find(p => normalizeCategory(p.category) === 'Фарм');
+                    if (farmItem) {
+                        setTimeout(() => {
+                            const gallery = document.getElementById('flowerGallery');
+                            if (gallery) {
+                                gallery.style.display = 'flex';
+                                gallery.style.position = 'absolute';
+                                gallery.style.left = '50%';
+                                gallery.style.bottom = '79%';
+                                gallery.style.transform = 'translateX(-50%)';
+                                gallery.style.zIndex = '10';
+                                el.appendChild(gallery);
+                                
+                                // Запускаємо відповідну галерею
+                                if (farmItem.id === 1) renderFlowerGallery();
+                                else if (farmItem.id === 2) renderCactusGallery();
+                                else if (farmItem.id === 3) renderMushroomGallery();
+                            }
+                        }, 200);
+                    }
+                }
+            });
+        }
+
+        function loadGameState() {
+            try {
+                const raw = localStorage.getItem('gameState');
+                if (!raw) return;
+                const s = JSON.parse(raw);
+                if (typeof s.coins === 'number') coins = s.coins;
+                if (typeof s.isSecretUnlocked === 'boolean') isSecretUnlocked = s.isSecretUnlocked;
+                if (typeof s.currentBowlId === 'number') currentBowlId = s.currentBowlId;
+                if (Array.isArray(s.purchasedItems)) purchasedItems = s.purchasedItems;
+                if (typeof s.hungerStage === 'number') hungerStage = s.hungerStage;
+                if (typeof s.energyStage === 'number') energyStage = s.energyStage;
+                if (s.tasksState) tasksState = { ...tasksState, ...s.tasksState };
+                
+                if (s.farm && s.farm.flower) {
+                    flowerCurrentStage = s.farm.flower.stage || 0;
+                    flowerNextTs = s.farm.flower.nextTs || 0;
+                    const now = nowMs();
+                    while (flowerNextTs && now >= flowerNextTs && flowerCurrentStage < 3) {
+                        flowerCurrentStage++;
+                        flowerNextTs += FARM_STAGE_MS;
+                    }
+                    if (flowerNextTs > 0) startFlowerInterval();
+                }
+                if (s.farm && s.farm.cactus) {
+                    cactusCurrentStage = s.farm.cactus.stage || 0;
+                    cactusNextTs = s.farm.cactus.nextTs || 0;
+                    const now = nowMs();
+                    while (cactusNextTs && now >= cactusNextTs && cactusCurrentStage < 3) {
+                        cactusCurrentStage++;
+                        cactusNextTs += FARM_STAGE_MS;
+                    }
+                    if (cactusNextTs > 0) startCactusInterval();
+                }
+                if (s.farm && s.farm.mushroom) {
+                    mushroomCurrentStage = s.farm.mushroom.stage || 0;
+                    mushroomNextTs = s.farm.mushroom.nextTs || 0;
+                    const now = nowMs();
+                    while (mushroomNextTs && now >= mushroomNextTs && mushroomCurrentStage < 3) {
+                        mushroomCurrentStage++;
+                        mushroomNextTs += FARM_STAGE_MS;
+                    }
+                    if (mushroomNextTs > 0) startMushroomInterval();
+                }
+
+                if (Array.isArray(s.placedItems)) {
+                    restorePlacedItems(s.placedItems);
+                }
+            } catch (e) {}
+        }
+        // --- Стан завдань ---
+        const DAY_MS = 24 * 60 * 60 * 1000;
+        let tasksState = {
+            dailyLogin: { nextAvailable: 0, reward: 10, streak: 1 },
+            feed5: { count: 0, nextAvailable: 0, reward: 25 },
+            purchaseDaily: { nextAvailable: 0, reward: 20 },
+            farmOnce: { completed: false, reward: 50 },
+            dailyComplex: { 
+                petCount: 0, 
+                coinsCaught: 0, 
+                farmGrown: false, 
+                nextAvailable: 0, 
+                reward: 70 
+            }
+        };
+        function loadTasksState() {
+            try {
+                const raw = localStorage.getItem('tasksState');
+                if (raw) {
+                    const saved = JSON.parse(raw);
+                    tasksState = { ...tasksState, ...saved };
+                }
+            } catch (e) {}
+        }
+        function saveTasksState() {
+            try {
+                localStorage.setItem('tasksState', JSON.stringify(tasksState));
+            } catch (e) {}
+        }
+        function nowMs() { return Date.now(); }
+        function timeLeft(ts) {
+            const left = ts - nowMs();
+            return left > 0 ? left : 0;
+        }
+        function formatTime(ms) {
+            const s = Math.floor(ms / 1000);
+            const h = Math.floor(s / 3600);
+            const m = Math.floor((s % 3600) / 60);
+            const sec = s % 60;
+            return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+        }
+
+        function updateBalanceUI() {
+            document.querySelectorAll('.balance').forEach(el => {
+                el.innerHTML = `Баланс <br> 🪙${coins}`;
+            });
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+
+        if (babyCat) {
+            babyCat.style.left = `${window.innerWidth / 2 - 120}px`;
+            babyCat.style.top = `${window.innerHeight * 0.72}px`;
+            babyCat.style.backgroundPosition = "0 0";
+        }
+
+
+        // Початкова позиція чорного котика — трохи правіше
+        if (blackCat) {
+            const blackStartX = window.innerWidth / 2 + 40;
+            const blackStartY = window.innerHeight * 0.7;
+            blackCat.style.left = `${blackStartX}px`;
+            blackCat.style.top = `${blackStartY}px`;
+            // Ініціалізуємо початковий кадр спрайта
+            blackCat.style.backgroundPosition = '0 0';
+        }
+
+        
+
+        function setAnimation(row, frame = 0) {
+            cat.style.backgroundPositionY = `-${row * 122}px`;
+            cat.style.backgroundPositionX = `-${frame * 122}px`;
+        }
+
+        function walk() {
+            if (isSitting || isLying || isClicked || isBlocked) return;
+            frame = (frame + 1) % 4;
+            cat.style.backgroundPositionX = `-${frame * 122}px`;
+        }
+
+        function moveCat() {
+            if (isSitting || isLying || isClicked || isBlocked) return;
+
+            let x = cat.offsetLeft;
+            let y = cat.offsetTop;
+
+            if (repeatMove) {
+                direction = lastDirection;
+                repeatMove = false;
+            } else {
+                direction = Math.floor(Math.random() * 4);
+                if ((direction === 1 || direction === 3) && Math.random() < 0.4) {
+                    repeatMove = true;
+                    lastDirection = direction;
+                }
+            }
+
+            const step = 15;
+            switch (direction) {
+                case 0:
+                    y += step;
+                    setAnimation(0);
+                    break;
+                case 1:
+                    x += step;
+                    setAnimation(1);
+                    break;
+                case 2:
+                    y -= step;
+                    setAnimation(2);
+                    break;
+                case 3:
+                    x -= step;
+                    setAnimation(3);
+                    break;
+            }
+
+            const minY = window.innerHeight * 0.6;
+            const maxY = window.innerHeight * 0.96 - 96;
+            const minX = window.innerWidth * 0.01;
+            const maxX = window.innerWidth * 0.96 - 96;
+
+            x = Math.max(minX, Math.min(maxX, x));
+            y = Math.max(minY, Math.min(maxY, y));
+
+            let distanceFromBottom = window.innerHeight - y;
+            if (distanceFromBottom > 250) {
+                cat.style.transform = "scale(0.89)";
+            } else if (distanceFromBottom > 210) {
+                cat.style.transform = "scale(0.92)";
+            } else if (distanceFromBottom > 170) {
+                cat.style.transform = "scale(0.96)";
+            } else {
+                cat.style.transform = "scale(1)";
+            }
+
+            cat.style.transition = `top ${speed}s linear, left ${speed}s linear, transform ${speed}s linear`;
+            cat.style.left = `${x}px`;
+            cat.style.top = `${y}px`;
+            // z-index: динамічно від висоти (чим нижче, тим вище шар)
+            cat.style.zIndex = Math.floor(cat.offsetTop);
+        }
+
+        function animateSitDown(callback) {
+            let sitFrame = 0;
+            let sitAnimation = setInterval(() => {
+                setAnimation(4, sitFrame);
+                sitFrame++;
+                if (sitFrame >= 4) {
+                    clearInterval(sitAnimation);
+                    if (callback) setTimeout(callback, 500);
+                }
+            }, 300);
+        }
+
+        function animateLieDown(callback) {
+            let lieFrame = 0;
+            let lieAnimation = setInterval(() => {
+                setAnimation(6, lieFrame);
+                lieFrame++;
+                if (lieFrame >= 4) {
+                    clearInterval(lieAnimation);
+                    if (callback) setTimeout(callback, 500);
+                }
+            }, 300);
+        }
+
+        function animateStandUp(callback) {
+            let standFrame = 3;
+            let standAnimation = setInterval(() => {
+                setAnimation(4, standFrame);
+                standFrame--;
+                if (standFrame < 0) {
+                    clearInterval(standAnimation);
+                    isSitting = false;
+                    setAnimation(0, 0);
+                    if (callback) callback();
+                }
+            }, 300);
+        }
+
+        function animateStandUpFromLie(callback) {
+            let standFrame = 3;
+            let standAnimation = setInterval(() => {
+                setAnimation(6, standFrame);
+                standFrame--;
+                if (standFrame < 0) {
+                    clearInterval(standAnimation);
+                    isLying = false;
+                    setAnimation(0, 0);
+                    if (callback) callback();
+                }
+            }, 300);
+        }
+
+        // === NEW ===
+
+        let hungerStage = 0;
+        let energyStage = 0;
+        let isSleeping = false;
+        let isAngry = false;
+        let isBlocked = false;
+        let emoteAnimationInterval = null;
+        let currentBowl = null;
+
+        // Змінна для поточної купленої миски
+        let currentBowlId = 1;
+
+        function updateBars() {
+            document.getElementById('hungerBar').src = `images/hungry_${hungerStage}.png`;
+            document.getElementById('energyBar').src = `images/energy_${energyStage}.png`;
+        }
+
+        const emote = document.getElementById('emote');
+
+        function showEmote(type) {
+            emote.className = 'emote';
+            if (type === 'angry') {
+                emote.textContent = '😡';
+                emote.classList.add('angry');
+            } else if (type === 'sleep') {
+                emote.textContent = '💤';
+                emote.classList.add('sleep');
+            }
+            positionEmote();
+            emote.style.opacity = '1';
+        }
+
+        function hideEmote() {
+            emote.style.opacity = '0';
+            setTimeout(() => emote.className = 'emote', 600);
+        }
+
+        function positionEmote() {
+            const catRect = cat.getBoundingClientRect();
+            emote.style.left = `${cat.offsetLeft + 40}px`;
+            emote.style.top = `${cat.offsetTop - 7}px`;
+        }
+
+        function startEmoteAnimation(type) {
+            let currentFrame = 0;
+            clearInterval(emoteAnimationInterval);
+            showEmote(type);
+
+            if (type === "angry") {
+                emoteAnimationInterval = setInterval(() => {
+                    setAnimation(7, currentFrame === 0 ? 2 : 3);
+                    currentFrame = 1 - currentFrame;
+                }, 700);
+            } else if (type === "sleep") {
+                emoteAnimationInterval = setInterval(() => {
+                    setAnimation(7, currentFrame === 0 ? 0 : 1);
+                    currentFrame = 1 - currentFrame;
+                }, 1300);
+            }
+        }
+
+        function stopCatActions() {
+            clearTimeout(walkTimeout);
+            clearTimeout(restTimeout);
+            isClicked = false;
+            isSitting = false;
+            isLying = false;
+            isBlocked = true; // Блокуємо дії котика
+            clearInterval(emoteAnimationInterval); // Зупиняємо всі анімації
+        }
+
+        // Перехід у злість (тепер працює навіть під час сну)
+        function transitionToAngry() {
+            if (isAngry) return;
+
+            console.log("Початок transitionToAngry");
+            isAngry = true;
+            isBlocked = true; // Блокуємо інші дії
+            stopCatActions();
+            isSitting = true;
+
+            animateSitDown(() => {
+                console.log("Кіт сів, показуємо злість");
+                startEmoteAnimation("angry");
+                startAngryAnimation();
+            });
+        }
+
+        function completeAngryTransition() {
+            isAngry = true;
+            isBlocked = true;
+            stopCatActions();
+            isSitting = true;
+
+            animateSitDown(() => {
+                startEmoteAnimation("angry");
+                startAngryAnimation();
+            });
+        }
+
+        function startAngryAnimation() {
+            let currentFrame = 2;
+            clearInterval(emoteAnimationInterval);
+            emoteAnimationInterval = setInterval(() => {
+                setAnimation(7, currentFrame);
+                currentFrame = currentFrame === 2 ? 3 : 2;
+            }, 700);
+        }
+
+        function transitionToSleep() {
+            if (isSleeping || isAngry || isBlocked || hungerStage === 5) {
+                console.log("Котик не може спати: isSleeping?", isSleeping, "isAngry?", isAngry, "isBlocked?", isBlocked, "hungerStage", hungerStage);
+                return;
+            }
+
+            isSleeping = true;
+            isBlocked = true;
+            stopCatActions();
+            isLying = true;
+
+            animateLieDown(() => {
+                startEmoteAnimation("sleep");
+                startSleepingAnimation();
+            });
+        }
+
+        function startSleepingAnimation() {
+            let currentFrame = 0;
+            clearInterval(emoteAnimationInterval);
+            emoteAnimationInterval = setInterval(() => {
+                setAnimation(7, currentFrame);
+                currentFrame = 1 - currentFrame;
+            }, 1000);
+        }
+
+        function checkCatState() {
+            console.log(`Стан: hunger=${hungerStage}, energy=${energyStage}, isSleeping=${isSleeping}, isAngry=${isAngry}, isBlocked=${isBlocked}`);
+
+            // Голод має найвищий пріоритет - навіть якщо кіт спить/заблокований
+            if (hungerStage === 5) {
+                console.log("Котик голодний (hungerStage=5)");
+                if (isSleeping) {
+                    console.log("Спроба прокинути сплячого голодного кота");
+                    forceWakeUpAndAngry();
+                } else if (!isAngry) {
+                    console.log("Перехід у стан злості");
+                    transitionToAngry();
+                }
+                return; // Не перевіряємо інші стани, якщо кіт голодний
+            }
+
+            // Якщо не голодний, але втомлений - можна спати
+            if (energyStage === 5 && !isSleeping && !isBlocked) {
+                console.log("Котик втомлений - перехід у сон");
+                transitionToSleep();
+            }
+        }
+
+        // Примусово прокинути кота і зробити його злим
+        function forceWakeUpAndAngry() {
+            console.log("Початок forceWakeUpAndAngry");
+            isSleeping = false;
+            isBlocked = false; // Розблоковуємо для переходу в злість
+            clearInterval(emoteAnimationInterval);
+            hideEmote();
+
+            // Швидко прокидаємо кота
+            animateStandUpFromLie(() => {
+                console.log("Кіт прокинувся, тепер перехід у злість");
+                transitionToAngry();
+            });
+        }
+
+        function animateWakeUpFromSleep(callback) {
+            let standFrame = 3;
+            let animation = setInterval(() => {
+                setAnimation(6, standFrame);
+                standFrame--;
+                if (standFrame < 0) {
+                    clearInterval(animation);
+                    if (callback) callback();
+                }
+            }, 300);
+        }
+
+        function animateCalmDown(callback) {
+            let calmFrame = 3;
+            let animation = setInterval(() => {
+                setAnimation(4, calmFrame);
+                calmFrame--;
+                if (calmFrame < 0) {
+                    clearInterval(animation);
+                    if (callback) callback();
+                }
+            }, 300);
+        }
+
+        function finalizeWakeUp() {
+            isClicked = false;
+            isSitting = false;
+            isLying = false;
+            updateBars();
+            setAnimation(0, 0);
+            startWalkingCycle();
+        }
+
+        function resumeCatActions() {
+            isBlocked = false;
+            clearInterval(emoteAnimationInterval);
+            hideEmote();
+
+            if (isSleeping) {
+                isSleeping = false;
+                animateWakeUpFromSleep(() => {
+                    // Відновлюємо правильний масштаб після пробудження
+                    updateCatScale();
+                    finalizeWakeUp();
+                });
+            } else if (isAngry) {
+                isAngry = false;
+                animateCalmDown(() => {
+                    // Відновлюємо правильний масштаб після злості
+                    updateCatScale();
+                    finalizeWakeUp();
+                });
+            } else {
+                // Відновлюємо правильний масштаб
+                updateCatScale();
+                finalizeWakeUp();
+            }
+        }
+
+        function updateCatScale() {
+            const y = cat.offsetTop;
+            const distanceFromBottom = window.innerHeight - y;
+
+            if (distanceFromBottom > 250) {
+                cat.style.transform = "scale(0.89)";
+            } else if (distanceFromBottom > 210) {
+                cat.style.transform = "scale(0.92)";
+            } else if (distanceFromBottom > 170) {
+                cat.style.transform = "scale(0.96)";
+            } else {
+                cat.style.transform = "scale(1)";
+            }
+        }
+
+        function finalizeWakeUp() {
+            isClicked = false;
+            isSitting = false;
+            isLying = false;
+            updateBars();
+            setAnimation(0, 0);
+            startWalkingCycle();
+        }
+
+
+        function feedCat() {
+            if (hungerStage > 0) hungerStage--;
+            if (energyStage > 0) energyStage--;
+
+            updateBars();
+
+            if (hungerStage < 5 && energyStage < 5 && isBlocked) {
+                resumeCatActions();
+            }
+
+            if (isAngry || isSleeping) {
+                hideEmote();
+                isAngry = false;
+                isSleeping = false;
+            }
+        }
+
+        function decreaseHunger() {
+            if (hungerStage < 5) {
+                hungerStage++;
+                updateBars();
+                saveGameState();
+                checkCatState(); // Викликаємо перевірку стану одразу після зміни голоду
+            }
+        }
+
+        function decreaseEnergy() {
+            if (energyStage < 5) {
+                energyStage++;
+                updateBars();
+                saveGameState();
+            }
+            checkCatState();
+        }
+
+
+        function toggleSit() {
+            if (isBlocked || isClicked) return;
+
+            // Відстеження прогресу Завдання дня (погладжування)
+            if (timeLeft(tasksState.dailyLogin.nextAvailable) >= 0) { // Використовуємо dailyLogin як маркер щоденності або просто дозволяємо завжди прогресувати якщо не завершено
+                if (timeLeft(tasksState.dailyComplex.nextAvailable) === 0) {
+                    tasksState.dailyComplex.petCount = (tasksState.dailyComplex.petCount || 0) + 1;
+                    if (tasksState.dailyComplex.petCount > 10) tasksState.dailyComplex.petCount = 10;
+                    checkDailyComplexTask();
+                    saveTasksState();
+                }
+            }
+
+            isClicked = true;
+            clearTimeout(walkTimeout);
+            clearTimeout(restTimeout);
+
+            if (isSitting || isLying) {
+                if (isLying) {
+                    animateStandUpFromLie(() => {
+                        isSitting = false;
+                        isLying = false;
+                        isClicked = false;
+                        startWalkingCycle();
+                    });
+                } else {
+                    animateStandUp(() => {
+                        isSitting = false;
+                        isLying = false;
+                        isClicked = false;
+                        startWalkingCycle();
+                    });
+                }
+            } else {
+                isSitting = true;
+                animateSitDown(() => {
+                    setTimeout(() => {
+                        isClicked = false;
+                    }, 1000);
+                });
+            }
+        }
+
+        function startWalkingCycle() {
+            if (isClicked || isSitting || isLying || isBlocked) return;
+
+            let walkTime = Math.floor(Math.random() * (120000 - 90000) + 90000);
+            walkTimeout = setTimeout(() => {
+                let restType = Math.random() < 0.61 ? 'sit' : 'lie';
+                let restTime;
+
+                if (restType === 'sit') {
+                    restTime = Math.floor(Math.random() * (30000 - 15000) + 15000);
+                    isSitting = true;
+                    animateSitDown(() => {
+                        restTimeout = setTimeout(() => {
+                            animateStandUp(() => {
+                                isSitting = false;
+                                startWalkingCycle();
+                            });
+                        }, restTime);
+                    });
+                } else {
+                    restTime = Math.floor(Math.random() * (45000 - 30000) + 30000);
+                    isLying = true;
+                    animateLieDown(() => {
+                        restTimeout = setTimeout(() => {
+                            animateStandUpFromLie(() => {
+                                isLying = false;
+                                startWalkingCycle();
+                            });
+                        }, restTime);
+                    });
+                }
+            }, walkTime);
+        }
+
+        cat.addEventListener('click', toggleSit);
+        setInterval(walk, 300);
+        setInterval(moveCat, 1500);
+        setInterval(decreaseHunger, 60 * 60 * 1000);
+        setInterval(decreaseEnergy, 2 * 60 * 60 * 1000);
+
+        updateBars();
+        startWalkingCycle();
+
+        // === Логіка для котика бейбі ===
+        if (babyCat) {
+            let babyFrame = 0;
+            let babyDirection = 0;
+            let babyLastDirection = -1;
+            let babyRepeatMove = false;
+            let babyState = "walk"; // walk | sit | eat
+            let babySitTimeout = null;
+            let babyLieTimeout = null;
+            let babyEatTimeout = null;
+            let babyIsAnimating = false;
+            let babyActionCooldown = false;
+            let babyZoomInterval = null; // Інтервал для "Zoomies" (біганини)
+            let babyIsZooming = false;   // Чи бігає зараз
+            let babyMoveInterval = null; // Змінна для інтервалу руху
+            let babyWalkInterval = null; // Змінна для інтервалу анімації ходьби
+
+            // Карта рядків спрайту для бейбі: налаштуйте під ваш PNG.
+            // Напрямки: 0=вниз, 1=вправо, 2=вгору, 3=вліво
+            const BABY_DIR_ROW = [0, 1, 2, 3];
+            // Ряди дій:
+            const BABY_SIT_ROW = 4;
+            const BABY_LIE_ROW = 6;
+            const BABY_EAT_ROW = 5; // якщо їжа на іншому ряду — змініть тут
+            function startBabyActionCooldown() {
+                babyActionCooldown = true;
+                setTimeout(() => {
+                    babyActionCooldown = false;
+                }, 30000 + Math.random() * 15000);
+            }
+            function setBabyAnimation(row, frame = 0) {
+                const frameWidth = 122;
+                const frameHeight = 122;
+                babyCat.style.backgroundPositionY = `-${row * frameHeight}px`;
+                babyCat.style.backgroundPositionX = `-${frame * frameWidth}px`;
+            }
+            function walkBaby() {
+                if (babyState !== "walk") return;
+                babyFrame = (babyFrame + 1) % 4;
+                const row = BABY_DIR_ROW[babyDirection] ?? 0;
+                setBabyAnimation(row, babyFrame);
+            }
+            function moveBabyCat() {
+                // Бар'єр для бейбі — як у чорного кота
+                const minY = window.innerHeight * 0.55;
+                const maxY = window.innerHeight * 0.98 - 122;
+                const minX = window.innerWidth * 0.0;
+                const maxX = window.innerWidth * 0.98 - 122;
+                if (babyState !== "walk") return;
+                // --- рух ---
+                if (babyRepeatMove) {
+                    if (Math.random() < 0.6) {
+                        babyDirection = babyLastDirection;
+                        babyRepeatMove = true;
+                    } else if (Math.random() < 0.75) {
+                        babyDirection = (babyLastDirection + (Math.random() < 0.5 ? 1 : 3)) % 4;
+                        babyRepeatMove = false;
+                        babyLastDirection = babyDirection;
+                    } else {
+                        babyDirection = (babyLastDirection + 2) % 4;
+                        babyRepeatMove = false;
+                        babyLastDirection = babyDirection;
+                    }
+                } else {
+                    if (Math.random() < 0.1) return;
+                    babyDirection = Math.floor(Math.random() * 4);
+                    if (Math.random() < 0.6) {
+                        babyRepeatMove = true;
+                        babyLastDirection = babyDirection;
+                    } else {
+                        babyRepeatMove = false;
+                        babyLastDirection = babyDirection;
+                    }
+                }
+                let x = babyCat.offsetLeft;
+                let y = babyCat.offsetTop;
+                const step = babyIsZooming ? 16 : 12; // Якщо бігає — крок більший (16px)
+                switch (babyDirection) {
+                    case 0: y += step; break;
+                    case 1: x += step; break;
+                    case 2: y -= step; break;
+                    case 3: x -= step; break;
+                }
+                x = Math.max(minX, Math.min(maxX, x));
+                y = Math.max(minY, Math.min(maxY, y));
+                let distanceFromBottom = window.innerHeight - y;
+                // Зменшений масштаб для бейбі (база ~0.85)
+                if (distanceFromBottom > 250) {
+                    babyCat.style.transform = "scale(0.73)";
+                } else if (distanceFromBottom > 210) {
+                    babyCat.style.transform = "scale(0.75)";
+                } else if (distanceFromBottom > 170) {
+                    babyCat.style.transform = "scale(0.78)";
+                } else {
+                    babyCat.style.transform = "scale(0.81)";
+                }
+                babyCat.style.left = `${x}px`;
+                babyCat.style.top = `${y}px`;
+                // z-index: динамічно від висоти
+                babyCat.style.zIndex = Math.floor(babyCat.offsetTop);
+                if (babyHearts && babyHearts.style.display !== 'none' && babyState === 'sit') {
+                    babyHearts.style.left = `${babyCat.offsetLeft + babyCat.offsetWidth / 2}px`;
+                    babyHearts.style.top = `${babyCat.offsetTop}px`;
+                }
+            }
+            // --- Сидіння ---
+            function animateBabySitDown() {
+                if (babySitTimeout) clearTimeout(babySitTimeout);
+                if (babyIsAnimating) return;
+                babyIsAnimating = true;
+                const prevTransition = babyCat.style.transition;
+                babyCat.style.transition = 'transform 0.5s linear';
+                // ВАЖЛИВО: одразу переводимо у стан "sit", щоб walkBaby не втручався
+                babyState = "sit";
+                if (babyHearts) {
+                    babyHearts.style.display = 'block';
+                    babyHearts.style.left = `${babyCat.offsetLeft + babyCat.offsetWidth / 2}px`;
+                    babyHearts.style.top = `${babyCat.offsetTop}px`;
+                }
+                let sitFrame = 0;
+                let sitAnim = setInterval(() => {
+                    setBabyAnimation(BABY_SIT_ROW, sitFrame);
+                    sitFrame++;
+                    if (sitFrame >= 4) {
+                        clearInterval(sitAnim);
+                        babyIsAnimating = false;
+                        babyCat.style.transition = prevTransition;
+                        const standDelay = 5000 + Math.random() * 5000;
+                        setTimeout(() => {
+                            animateBabyStandUpFromSit();
+                        }, standDelay);
+                    }
+                }, 300);
+            }
+            function animateBabyStandUpFromSit() {
+                if (babyIsAnimating) return;
+                babyIsAnimating = true;
+                let standFrame = 3;
+                let standAnim = setInterval(() => {
+                    setBabyAnimation(BABY_SIT_ROW, standFrame);
+                    standFrame--;
+                    if (standFrame < 0) {
+                        clearInterval(standAnim);
+                        babyIsAnimating = false;
+                        babyState = "walk";
+                        startBabyActionCooldown();
+                        if (babyHearts) {
+                            babyHearts.style.display = 'none';
+                        }
+                    }
+                }, 300);
+            }
+            function scheduleBabySit() {
+                const delay = 30000 + Math.random() * 15000;
+                if (babySitTimeout) clearTimeout(babySitTimeout);
+                babySitTimeout = setTimeout(() => {
+                    if (babyState === "walk" && !babyActionCooldown) animateBabySitDown();
+                    scheduleBabySit();
+                }, delay);
+            }
+            // --- Лежить ---
+            function animateBabyLieDown() {
+                if (babyIsAnimating) return;
+                babyIsAnimating = true;
+                const prevTransition = babyCat.style.transition;
+                babyCat.style.transition = 'transform 0.5s linear';
+                let lieFrame = 0;
+                babyState = "lie";
+                if (babyLieTimeout) clearTimeout(babyLieTimeout);
+                let lieAnim = setInterval(() => {
+                    setBabyAnimation(BABY_LIE_ROW, lieFrame);
+                    lieFrame++;
+                    if (lieFrame >= 4) {
+                        clearInterval(lieAnim);
+                        babyIsAnimating = false;
+                        babyCat.style.transition = prevTransition;
+                        scheduleBabyStandUpFromLie();
+                    }
+                }, 300);
+            }
+            function scheduleBabyLie() {
+                const delay = 30000 + Math.random() * 15000;
+                babyLieTimeout = setTimeout(() => {
+                    if (babyState === "walk" && !babyActionCooldown) animateBabyLieDown();
+                    scheduleBabyLie();
+                }, delay);
+            }
+            function animateBabyStandUpFromLie() {
+                if (babyIsAnimating) return;
+                babyIsAnimating = true;
+                let standFrame = 3;
+                let standAnim = setInterval(() => {
+                    setBabyAnimation(BABY_LIE_ROW, standFrame);
+                    standFrame--;
+                    if (standFrame < 0) {
+                        clearInterval(standAnim);
+                        babyState = "walk";
+                        babyIsAnimating = false;
+                        startBabyActionCooldown();
+                    }
+                }, 300);
+            }
+            function scheduleBabyStandUpFromLie() {
+                const delay = 15000 + Math.random() * 10000;
+                babyLieTimeout = setTimeout(() => {
+                    if (babyState === "lie" && !babyIsAnimating) {
+                        animateBabyStandUpFromLie();
+                    }
+                }, delay);
+            }
+            // --- Їсть ---
+            function animateBabyEat() {
+                if (babyIsAnimating) return;
+                babyIsAnimating = true;
+                const prevTransition = babyCat.style.transition;
+                // Щоб кадри не “тягались”, вимикаємо плавний рух top/left під час їжі
+                babyCat.style.transition = 'transform 0.5s linear';
+                let eatFrame = 0;
+                let eatCount = 0;
+                babyState = "eat";
+                let eatAnim = setInterval(() => {
+                    setBabyAnimation(BABY_EAT_ROW, eatFrame);
+                    eatFrame = (eatFrame + 1) % 4;
+                    eatCount++;
+                    if (eatCount > 12) {
+                        clearInterval(eatAnim);
+                        babyIsAnimating = false;
+                        babyState = "walk";
+                        babyCat.style.transition = prevTransition;
+                        startBabyActionCooldown();
+                    }
+                }, 300);
+            }
+            function scheduleBabyEat() {
+                const delay = 30000 + Math.random() * 15000;
+                babyEatTimeout = setTimeout(() => {
+                    if (babyState === "walk" && !babyActionCooldown) animateBabyEat();
+                    scheduleBabyEat();
+                }, delay);
+            }
+
+            // --- "Zoomies" (біганина) ---
+            function startBabyZoomies() {
+                if (babyState !== "walk" || babyIsAnimating) {
+                    // Якщо зайнятий, спробуємо пізніше
+                    setTimeout(startBabyZoomies, 5000);
+                    return;
+                }
+                
+                babyIsZooming = true;
+                
+                // Прискорюємо інтервали
+                clearInterval(babyMoveInterval);
+                clearInterval(babyWalkInterval);
+                
+                // Швидший рух (кожні 250мс замість 750мс)
+                babyMoveInterval = setInterval(moveBabyCat, 250);
+                // Швидша анімація (кожні 150мс замість 300мс)
+                babyWalkInterval = setInterval(walkBaby, 150);
+                
+                // Змінюємо transition для плавності швидкого руху
+                babyCat.style.transition = 'transform 0.25s linear, left 0.25s linear, top 0.25s linear';
+                
+                // Бігає 7 секунд
+                setTimeout(endBabyZoomies, 7000);
+            }
+
+            function endBabyZoomies() {
+                babyIsZooming = false;
+                
+                // Повертаємо звичайні інтервали
+                clearInterval(babyMoveInterval);
+                clearInterval(babyWalkInterval);
+                
+                babyMoveInterval = setInterval(moveBabyCat, 750);
+                babyWalkInterval = setInterval(walkBaby, 300);
+                
+                // Повертаємо звичайний transition
+                babyCat.style.transition = 'transform 0.5s linear, left 0.5s linear, top 0.5s linear';
+                
+                scheduleBabyZoomies();
+            }
+
+            function scheduleBabyZoomies() {
+                // Випадковий час від 100 до 150 секунд (100000 - 150000 мс)
+                const delay = Math.floor(Math.random() * (150000 - 100000) + 100000);
+                // const delay = 5000; // Для тесту можна розкоментувати
+                setTimeout(startBabyZoomies, delay);
+            }
+
+            // --- Запуск ---
+            setBabyAnimation(0, 0);
+            babyMoveInterval = setInterval(moveBabyCat, 750);
+            babyWalkInterval = setInterval(walkBaby, 300);
+            scheduleBabySit();
+            // Лежання вимкнено для бейбі за вимогою — використовуємо тільки сидіння та їжу
+            scheduleBabyEat();
+            scheduleBabyZoomies(); // Запускаємо планувальник біганини
+        }
+
+
+        
+        // === Логіка для чорного котика ===
+        if (blackCat) {
+            let blackFrame = 0;
+            let blackDirection = 0;
+            let blackLastDirection = -1;
+            let blackRepeatMove = false;
+            let blackState = "walk"; // walk | sit | lie | eat
+            let blackSitTimeout = null;
+            let blackLieTimeout = null;
+            let blackEatTimeout = null;
+            let blackIsAnimating = false;
+
+            // --- Кулдаун між діями ---
+            let blackActionCooldown = false;
+            function startBlackActionCooldown() {
+                blackActionCooldown = true;
+                setTimeout(() => {
+                    blackActionCooldown = false;
+                }, 30000 + Math.random() * 15000); // 30-45 сек
+            }
+
+            function setBlackAnimation(row, frame = 0) {
+                const frameWidth = 122;
+                const frameHeight = 122;
+                blackCat.style.backgroundPositionY = `-${row * frameHeight}px`;
+                blackCat.style.backgroundPositionX = `-${frame * frameWidth}px`;
+            }
+
+            function walkBlack() {
+                if (blackState !== "walk") return;
+                blackFrame = (blackFrame + 1) % 4;
+                // Визначаємо ряд для анімації згідно напрямку
+                let row = 0;
+                switch (blackDirection) {
+                    case 0: row = 0; break; // вниз
+                    case 1: row = 1; break; // вправо (правильний ряд)
+                    case 2: row = 2; break; // вгору
+                    case 3: row = 3; break; // вліво (правильний ряд)
+                }
+                setBlackAnimation(row, blackFrame);
+            }
+
+            function moveBlackCat() {
+                if (blackState !== "walk") return;
+                let x = blackCat.offsetLeft;
+                let y = blackCat.offsetTop;
+
+                // 60% шанс продовжити рух у тому ж напрямку, 30% — змінити на сусідній, 10% — різко повернути
+                if (blackRepeatMove) {
+                    // 60% шанс ще раз повторити цей напрямок
+                    if (Math.random() < 0.6) {
+                        blackDirection = blackLastDirection;
+                        blackRepeatMove = true;
+                    } else if (Math.random() < 0.75) {
+                        // 30% — плавно змінити напрямок (сусідній)
+                        blackDirection = (blackLastDirection + (Math.random() < 0.5 ? 1 : 3)) % 4;
+                        blackRepeatMove = false;
+                        blackLastDirection = blackDirection;
+                    } else {
+                        // 10% — різко повернути (на протилежний)
+                        blackDirection = (blackLastDirection + 2) % 4;
+                        blackRepeatMove = false;
+                        blackLastDirection = blackDirection;
+                    }
+                } else {
+                    // 10% шанс просто постояти (не рухатись)
+                    if (Math.random() < 0.1) {
+                        return;
+                    }
+                    blackDirection = Math.floor(Math.random() * 4);
+                    // 60% шанс повторити цей напрямок ще раз
+                    if (Math.random() < 0.6) {
+                        blackRepeatMove = true;
+                        blackLastDirection = blackDirection;
+                    } else {
+                        blackRepeatMove = false;
+                        blackLastDirection = blackDirection;
+                    }
+                }
+
+                const step = 13; // швидше рухається
+                switch (blackDirection) {
+                    case 0: y += step; break;
+                    case 1: x += step; break;
+                    case 2: y -= step; break;
+                    case 3: x -= step; break;
+                }
+
+                // Бар'єр для чорного котика — можна спускатись нижче і лівіше
+                const minY = window.innerHeight * 0.55;
+                const maxY = window.innerHeight * 0.98 - 122;
+                const minX = window.innerWidth * 0.0;
+                const maxX = window.innerWidth * 0.98 - 122;
+
+                x = Math.max(minX, Math.min(maxX, x));
+                y = Math.max(minY, Math.min(maxY, y));
+
+                let distanceFromBottom = window.innerHeight - y;
+                if (distanceFromBottom > 250) {
+                    blackCat.style.transform = "scale(0.89)";
+                } else if (distanceFromBottom > 210) {
+                    blackCat.style.transform = "scale(0.92)";
+                } else if (distanceFromBottom > 170) {
+                    blackCat.style.transform = "scale(0.96)";
+                } else {
+                    blackCat.style.transform = "scale(1)";
+                }
+
+                blackCat.style.transition = `top ${speed}s linear, left ${speed}s linear, transform ${speed}s linear`;
+                blackCat.style.left = `${x}px`;
+                blackCat.style.top = `${y}px`;
+                // z-index: динамічно від висоти
+                blackCat.style.zIndex = Math.floor(blackCat.offsetTop);
+            }
+
+            // --- Сидіння ---
+            function animateBlackSitDown() {
+                if (blackSitTimeout) clearTimeout(blackSitTimeout);
+                if (blackIsAnimating) return;
+                blackIsAnimating = true;
+                // Зберігаємо поточний transition
+                const prevTransition = blackCat.style.transition;
+                // Вимикаємо transition для top/left
+                blackCat.style.transition = 'transform 0.5s linear';
+                let sitFrame = 0;
+                let sitAnim = setInterval(() => {
+                    setBlackAnimation(4, sitFrame);
+                    sitFrame++;
+                    if (sitFrame >= 4) {
+                        clearInterval(sitAnim);
+                        blackIsAnimating = false;
+                        blackState = "sit";
+                        // Повертаємо transition назад
+                        blackCat.style.transition = prevTransition;
+                        // Через 5-10 секунд запускаємо анімацію вставання
+                        const standDelay = 5000 + Math.random() * 5000;
+                        setTimeout(() => {
+                            animateBlackStandUpFromSit();
+                        }, standDelay);
+                    }
+                }, 300);
+
+            // Анімація вставання після сидіння (зворотна анімація)
+            function animateBlackStandUpFromSit() {
+                if (blackIsAnimating) return;
+                blackIsAnimating = true;
+                let standFrame = 3;
+                let standAnim = setInterval(() => {
+                    setBlackAnimation(4, standFrame);
+                    standFrame--;
+                    if (standFrame < 0) {
+                        clearInterval(standAnim);
+                        blackIsAnimating = false;
+                        blackState = "walk";
+                        startBlackActionCooldown();
+                    }
+                }, 300);
+            }
+            }
+            function scheduleBlackSit() {
+                // Ходить 30-45 сек перед сидінням
+                const delay = 30000 + Math.random() * 15000;
+                if (blackSitTimeout) clearTimeout(blackSitTimeout);
+                blackSitTimeout = setTimeout(() => {
+                    if (blackState === "walk" && !blackActionCooldown) animateBlackSitDown();
+                    scheduleBlackSit();
+                }, delay);
+            }
+            function animateBlackStandUp() {
+                if (blackIsAnimating) return;
+                blackIsAnimating = true;
+                let standFrame = 3;
+                let standAnim = setInterval(() => {
+                    setBlackAnimation(4, standFrame);
+                    standFrame--;
+                    if (standFrame < 0) {
+                        clearInterval(standAnim);
+                        blackState = "walk";
+                        blackIsAnimating = false;
+                    }
+                }, 300);
+            }
+            function animateBlackStandUpFromLie() {
+                if (blackIsAnimating) return;
+                blackIsAnimating = true;
+                let standFrame = 3;
+                let standAnim = setInterval(() => {
+                    setBlackAnimation(6, standFrame);
+                    standFrame--;
+                    if (standFrame < 0) {
+                        clearInterval(standAnim);
+                        blackState = "walk";
+                        blackIsAnimating = false;
+                        startBlackActionCooldown();
+                    }
+                }, 300);
+            }
+            function animateBlackLieDown() {
+                if (blackIsAnimating) return;
+                blackIsAnimating = true;
+                let lieFrame = 0;
+                blackState = "lie";
+                if (blackLieTimeout) clearTimeout(blackLieTimeout);
+                let lieAnim = setInterval(() => {
+                    setBlackAnimation(6, lieFrame);
+                    lieFrame++;
+                    if (lieFrame >= 4) {
+                        clearInterval(lieAnim);
+                        blackIsAnimating = false;
+                        scheduleBlackStandUpFromLie();
+                    }
+                }, 300);
+            // --- Stand up after sitting ---
+            function scheduleBlackStandUp() {
+                // scheduleBlackStandUp більше не потрібна, бо вставання тепер у animateBlackSitDown
+            }
+
+            // --- Stand up after lying ---
+            function scheduleBlackStandUpFromLie() {
+                // Природніше: 15-25 сек
+                const delay = 15000 + Math.random() * 10000;
+                blackLieTimeout = setTimeout(() => {
+                    if (blackState === "lie" && !blackIsAnimating) {
+                        animateBlackStandUpFromLie();
+                    }
+                }, delay);
+            }
+            }
+            function scheduleBlackLie() {
+                // Ходить 30-45 сек перед лежанням
+                const delay = 30000 + Math.random() * 15000;
+                blackLieTimeout = setTimeout(() => {
+                    if (blackState === "walk" && !blackActionCooldown) animateBlackLieDown();
+                    scheduleBlackLie();
+                }, delay);
+            }
+
+            // --- Їсть ---
+            function animateBlackEat() {
+                if (blackIsAnimating) return;
+                blackIsAnimating = true;
+                let eatFrame = 0;
+                let eatCount = 0;
+                blackState = "eat";
+                let eatAnim = setInterval(() => {
+                    setBlackAnimation(5, eatFrame);
+                    eatFrame = (eatFrame + 1) % 4;
+                    eatCount++;
+                    if (eatCount > 12) { // ~3 сек
+                        clearInterval(eatAnim);
+                        blackIsAnimating = false;
+                        blackState = "walk";
+                        startBlackActionCooldown();
+                    }
+                }, 300);
+            }
+            function scheduleBlackEat() {
+                // Ходити 30-45 сек перед їжею
+                const delay = 30000 + Math.random() * 15000;
+                blackEatTimeout = setTimeout(() => {
+                    if (blackState === "walk" && !blackActionCooldown) animateBlackEat();
+                    scheduleBlackEat();
+                }, delay);
+            }
+
+            // --- Запуск ---
+            setBlackAnimation(0, 0);
+            setInterval(moveBlackCat, 750); // швидше оновлення позиції
+            setInterval(walkBlack, 300);
+            scheduleBlackSit();
+            scheduleBlackLie();
+            scheduleBlackEat();
+        }
+
+        // const bowl = document.getElementById('bowl');
+        let isEating = false;
+
+        function getBowlPosition() {
+            const rect = bowl.getBoundingClientRect();
+            console.log('Координати миски:', rect); // Додано для перевірки
+            return {
+                x: rect.left + window.scrollX,
+                y: rect.top + window.scrollY
+            };
+        }
+
+        function moveCatTo(targetX, targetY, callback) {
+            const step = 20;
+            let frame = 0;
+
+            // Зберігаємо початковий масштаб
+            const initialScale = cat.style.transform || 'scale(1)';
+
+            function moveInX() {
+                const intervalX = setInterval(() => {
+                    let x = cat.offsetLeft;
+                    if (Math.abs(targetX - x) <= step) {
+                        clearInterval(intervalX);
+                        moveInY();
+                        return;
+                    }
+
+                    if (targetX > x) {
+                        x += step;
+                        setAnimation(1, frame);
+                    } else {
+                        x -= step;
+                        setAnimation(3, frame);
+                    }
+
+                    cat.style.left = `${x}px`;
+                    frame = (frame + 1) % 4;
+
+                    // Оновлюємо масштаб під час руху
+                    updateScaleDuringMovement();
+                }, 200);
+            }
+
+            function moveInY() {
+                const intervalY = setInterval(() => {
+                    let y = cat.offsetTop;
+                    if (Math.abs(targetY - y) <= step) {
+                        clearInterval(intervalY);
+                        if (callback) callback();
+                        return;
+                    }
+
+                    if (targetY > y) {
+                        y += step;
+                        setAnimation(0, frame);
+                    } else {
+                        y -= step;
+                        setAnimation(2, frame);
+                    }
+
+                    cat.style.top = `${y}px`;
+                    frame = (frame + 1) % 4;
+
+                    // Оновлюємо масштаб під час руху
+                    updateScaleDuringMovement();
+                }, 200);
+            }
+
+            function updateScaleDuringMovement() {
+                const y = cat.offsetTop;
+                const distanceFromBottom = window.innerHeight - y;
+
+                if (distanceFromBottom > 250) {
+                    cat.style.transform = "scale(0.89)";
+                } else if (distanceFromBottom > 210) {
+                    cat.style.transform = "scale(0.92)";
+                } else if (distanceFromBottom > 170) {
+                    cat.style.transform = "scale(0.96)";
+                } else {
+                    cat.style.transform = "scale(1)";
+                }
+            }
+
+            moveInX();
+        }
+
+        function animateEating(callback) {
+            console.log('Котик починає їсти');
+            let eatFrame = 0;
+            let eatCount = 0;
+            const maxEats = 4;
+            const interval = setInterval(() => {
+                setAnimation(5, eatFrame);
+                eatFrame = (eatFrame + 1) % 4;
+                if (++eatCount > maxEats * 4) {
+                    clearInterval(interval);
+                    if (callback) callback();
+                }
+            }, 200);
+        }
+
+        function feedCatSequence(hungerGain = 1, energyGain = 1, callback) {
+            console.log('Котик починає йти до миски');
+            isEating = true;
+            stopCatActions();
+
+            const bowlPos = getBowlPosition();
+            const targetX = bowlPos.x - 30;
+            const targetY = bowlPos.y - 30;
+
+            // Встановлюємо правильний масштаб перед початком руху
+            updateCatScale();
+
+            moveCatTo(targetX, targetY, () => {
+                console.log('Котик дійшов до миски');
+                animateEating(() => {
+                    console.log('Котик закінчив їсти');
+                    hungerStage = Math.max(0, hungerStage - hungerGain);
+                    energyStage = Math.max(0, energyStage - energyGain);
+                    updateBars();
+                    isEating = false;
+
+                    // Встановлюємо правильний масштаб після закінчення їжі
+                    updateCatScale();
+                    resumeCatActions();
+
+                    // Викликаємо callback, якщо він є
+                    if (callback) callback();
+                    // Реєструємо прогрес завдання "Покорми котика 5 разів"
+                    registerFeedingForTask();
+                });
+            });
+        }
+
+        // Перевіряємо стан кожні 2 с
+        setInterval(checkCatState, 2000);
+
+
+
+        // Функція для закриття магазину (додано оголошення)
+        function closeShop() {
+            const shopOverlay = document.getElementById('shopOverlay');
+            shopOverlay.style.opacity = '0';
+            setTimeout(() => {
+                shopOverlay.style.display = 'none';
+            }, 300);
+        }
+
+        // Оновлена функція відкриття магазину
+        function openShop() {
+            const shopOverlay = document.getElementById('shopOverlay');
+            const categoriesContainer = document.getElementById('categoriesContainer');
+
+            // Заповнюємо категорії
+            categoriesContainer.innerHTML = '';
+            const categories = ['Корм', 'Миски', 'Лампи', 'Картини', 'Іграшки', 'Тумбочки', 'Фарм', 'Таємна'];
+            categories.forEach((category, index) => {
+                const catElement = document.createElement('div');
+                let isLocked = false;
+                if (category === 'Фарм' && !isTumbPurchased()) {
+                    isLocked = true;
+                    catElement.className = 'category locked';
+                    catElement.innerHTML = '<span class="lock-icon">🔒</span><span class="farm-text">Фарм</span><span class="lock-icon">🔒</span>';
+                } else if (category === 'Таємна' && !isSecretUnlocked) {
+                    isLocked = true;
+                    catElement.className = 'category locked';
+                    catElement.innerHTML = '<span class="lock-icon">🔒</span><span class="farm-text">Таємна</span><span class="lock-icon">🔒</span>';
+                } else {
+                    catElement.className = 'category' + (index === 0 ? ' active' : '');
+                    catElement.textContent = category;
+                }
+                catElement.onclick = function () {
+                    if (isLocked) {
+                        if (category === 'Фарм') {
+                            openFarmLockModal();
+                        } else if (category === 'Таємна') {
+                            openSecretUnlockModal();
+                        }
+                        return;
+                    }
+                    document.querySelectorAll('.category').forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                    this.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                    loadCategoryItems(category);
+                };
+                categoriesContainer.appendChild(catElement);
+            });
+
+            // Завантажуємо першу категорію (тільки 4 товари)
+            loadCategoryItems(categories[0], 4);
+
+            // Показуємо магазин
+            shopOverlay.style.display = 'flex';
+            setTimeout(() => {
+                shopOverlay.style.opacity = '1';
+            }, 10);
+
+            // Додаємо обробник для кнопки завдань
+            document.getElementById('tasksButton').onclick = function (e) {
+                e.stopPropagation();
+                openTasks();
+            };
+        }
+
+        function openSecretUnlockModal() {
+            document.getElementById('secretUnlockPriceLabel').textContent = SECRET_UNLOCK_PRICE;
+            const modal = document.getElementById('secretUnlockModal');
+            modal.style.display = 'flex';
+        }
+        function closeSecretUnlockModal() {
+            const modal = document.getElementById('secretUnlockModal');
+            modal.style.display = 'none';
+        }
+        function tryUnlockSecret() {
+            if (coins >= SECRET_UNLOCK_PRICE) {
+                coins -= SECRET_UNLOCK_PRICE;
+                isSecretUnlocked = true;
+                updateBalanceUI();
+                saveGameState();
+                closeSecretUnlockModal();
+                openShop();
+            } else {
+                alert('Недостатньо монет для розблокування «Таємна».');
+            }
+        }
+
+        function loadCategoryItems(category, count = 4) {
+            const shopContent = document.getElementById('shopContent');
+            shopContent.innerHTML = '';
+
+            // Для Таємної категорії завжди показуємо тільки один елемент
+            if (category === 'Таємна') {
+                count = 2;
+            }
+
+            if (category === 'Корм') {
+                const foods = [
+                    { id: 1, name: "Звичайний корм", price: 10, energy: 1, hunger: 1 },
+                    { id: 2, name: "Преміум корм", price: 25, energy: 3, hunger: 2 }
+                ];
+
+                foods.forEach(food => {
+                    const item = document.createElement('div');
+                    item.className = 'shop-item food-category';
+
+                    const image = document.createElement('div');
+                    image.className = 'item-image';
+                    image.style.backgroundImage = `url('shop/food_${food.id}.png')`;
+
+                    const infoContainer = document.createElement('div');
+                    infoContainer.className = 'item-info';
+
+                    const name = document.createElement('div');
+                    name.className = 'item-name';
+                    name.textContent = food.name;
+
+                    const price = document.createElement('div');
+                    price.className = 'item-price';
+                    price.textContent = `🪙${food.price}`;
+
+                    const button = document.createElement('button');
+                    button.className = 'buy-button';
+                    button.textContent = 'КУПИТИ';
+                    button.onclick = function () {
+                        buyFood(food, button);
+                    };
+
+                    infoContainer.appendChild(name);
+                    infoContainer.appendChild(price);
+                    infoContainer.appendChild(button);
+
+                    item.appendChild(image);
+                    item.appendChild(infoContainer);
+
+                    shopContent.appendChild(item);
+                });
+            } else if (category === 'Фарм') {
+                // У Фарм показуємо тільки 3 предмети
+                const farmItems = [
+                    { id: 1, name: "Цвітуйочок", price: 60 },
+                    { id: 2, name: "Кактусьонок", price: 100 },
+                    { id: 3, name: "Магічний гриб", price: 170 }
+                ];
+                farmItems.forEach(item => {
+                    shopContent.appendChild(createShopItem(item, category));
+                });
+            } else {
+                // Кастомні назви для всіх категорій, крім Фарм і Корм
+                const customNames = {
+                    'Миски': ['Троха ванюча', 'Глибока миска', 'Удобна миска', 'Елітна миска'],
+                    'Лампи': ['Поломана лампа', 'Не оч світить', 'Красіва лампа', 'Ваше бомба лампа'],
+                    'Картини': ['Піксельний пейзаж', 'Картина з котиком', 'Абстракція', 'Постер мрій'],
+                    'Іграшки': ['Миша сіра', 'Клубок', 'Забавка', 'Плюшевий друг'],
+                    'Тумбочки': ['Маленька тумбочка', 'Тумба з шухлядою', 'Дорога тумба', 'Тумба-Елітна'],
+                    'Таємна': ['Черниш', 'Міні бейбі']
+                };
+
+                if (category === 'Таємна') {
+                    const secretItems = [
+                        { id: 1, name: 'Черниш', price: 800 },
+                        { id: 2, name: 'Міні бейбі', price: 1000 }
+                    ];
+                    secretItems.forEach(item => {
+                        shopContent.appendChild(createShopItem(item, category));
+                    });
+                } else {
+                    for (let i = 1; i <= count; i++) {
+                        const namesForCategory = customNames[category] || [];
+                        const displayName = namesForCategory[i - 1] || `${category} ${i}`;
+                        const itemData = {
+                            id: i,
+                            name: displayName,
+                            price: i * 10 + 30
+                        };
+                        shopContent.appendChild(createShopItem(itemData, category));
+                    }
+                }
+            }
+        }
+
+        // Оновлена функція createShopItem для великих товарів
+        // Оновлена функція створення товару
+        function createShopItem(item, category, isFood = false) {
+            if (!item || !item.id || !item.name || !item.price) {
+                console.error('Некоректні дані для товару:', item);
+                return document.createElement('div'); // Повертаємо порожній елемент, щоб уникнути помилки
+            }
+
+            const itemElement = document.createElement('div');
+            let classes = ['shop-item'];
+            if (isFood) classes.push('food-category');
+            if (normalizeCategory(category).replace(/\s/g, '').toLowerCase() === 'миски') classes.push('miska');
+            itemElement.className = classes.join(' ');
+
+            const image = document.createElement('div');
+            image.className = 'item-image';
+            if (category === 'Тумбочки') image.classList.add('tumb');
+            if (category === 'Картини') {
+                image.classList.add('picture');
+                image.style.transform = getPictureRotation(item.id);
+            }
+            if (category === 'Іграшки') image.classList.add('toy');
+            if (category === 'Фарм') {
+                let imageName = '';
+                if (item.id === 1) imageName = `Фарм-4.png`;
+                else if (item.id === 2) imageName = `ФармК-4.png`;
+                else if (item.id === 3) imageName = `Гриб-4.png`;
+                else imageName = `Фарм-${item.id}.png`;
+                image.style.backgroundImage = `url('shop/${imageName}')`;
+            } else if (category === 'Таємна') {
+                if (item.id === 1) {
+                    image.style.backgroundImage = `url('shop/img-black.png')`;
+                } else if (item.id === 2) {
+                    image.style.backgroundImage = `url('shop/img-baby.png')`;
+                } else {
+                    image.style.backgroundImage = `url('shop/${category.toLowerCase()}_${item.id}.png')`;
+                }
+            } else {
+                image.style.backgroundImage = isFood
+                    ? `url('shop/food_${item.id}.png')`
+                    : (category === 'Іграшки' ? `url('shop/toy_${item.id}.png')` : `url('shop/${category.toLowerCase()}_${item.id}.png')`);
+            }
+
+            const infoContainer = document.createElement('div');
+            infoContainer.className = 'item-info';
+
+            const name = document.createElement('div');
+            name.className = 'item-name';
+            name.textContent = item.name;
+
+            const price = document.createElement('div');
+            price.className = 'item-price';
+            price.textContent = `🪙${item.price}`;
+
+            infoContainer.appendChild(name);
+            infoContainer.appendChild(price);
+
+            // Додаємо кнопку інфо для категорії Фарм
+            if (normalizeCategory(category) === 'Фарм') {
+                const infoBtn = document.createElement('button');
+                infoBtn.className = 'farm-info-btn';
+                infoBtn.textContent = 'i';
+                infoBtn.onclick = function(e) {
+                    e.stopPropagation();
+                    let infoText = '';
+                    if (item.id === 1) infoText = 'Квітка:\nДохід: 🪙15\nЧас росту: 3 год';
+                    else if (item.id === 2) infoText = 'Кактус:\nДохід: 🪙30\nЧас росту: 3 год';
+                    else if (item.id === 3) infoText = 'Гриб:\nДохід: 🪙50\nЧас росту: 3 год';
+                    alert(infoText);
+                };
+                price.appendChild(infoBtn);
+            }
+
+            // Блокування маленького котика до покупки чорного
+            const isBabyLocked = (normalizeCategory(category) === 'Таємна' && item.id === 2 && !isPurchased('Таємна', 1));
+
+            if (isPurchased(category, item.id)) {
+                console.log('Додаю purchased для', category, item.id);
+                itemElement.classList.add('purchased');
+                const purchasedLabel = document.createElement('div');
+                purchasedLabel.className = 'purchased-label';
+                purchasedLabel.textContent = 'Куплено';
+                infoContainer.appendChild(purchasedLabel);
+                // Додаємо кнопку "Видалити" для всіх, крім мисок
+                if (normalizeCategory(category).replace(/\s/g, '').toLowerCase() !== 'миски') {
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'delete-button';
+                    deleteBtn.textContent = 'Видалити';
+                    deleteBtn.onclick = function () {
+                        showDeleteConfirm(() => {
+                            // Видалити з кімнати
+                            const el = getPlacedItemElement(category, item.id);
+                            if (el) el.remove();
+                            removePurchased(category, item.id);
+                            // Якщо це Фарм — видалити з flowerGallery і purchasedItems
+                            if (normalizeCategory(category) === 'Фарм') {
+                                const gallery = document.getElementById('flowerGallery');
+                                if (gallery) {
+                                    gallery.innerHTML = '';
+                                    gallery.style.display = 'none';
+                                    if (gallery.parentElement && gallery.parentElement.classList.contains('placed-item') && gallery.parentElement.classList.contains('tumb')) {
+                                        gallery.parentElement.removeChild(gallery);
+                                    }
+                                }
+                                purchasedItems = purchasedItems.filter(obj => !(normalizeCategory(obj.category) === 'Фарм' && obj.id === item.id));
+                                console.log('[delete] purchasedItems after delete:', purchasedItems);
+                            } else if (normalizeCategory(category) === 'Таємна') {
+                                if (item.id === 1) {
+                                    const bc = document.querySelector('.black-cat');
+                                    if (bc) bc.style.display = 'none';
+                                } else if (item.id === 2) {
+                                    const bb = document.querySelector('.baby-cat');
+                                    if (bb) bb.style.display = 'none';
+                                    const bh = document.getElementById('babyHearts');
+                                    if (bh) bh.style.display = 'none';
+                                }
+                            }
+                            loadCategoryItems(category);
+                        });
+                    };
+                    console.log('Додаю кнопку видалити', category, item.id);
+                    // Додаємо кнопку саме після purchasedLabel
+                    infoContainer.appendChild(deleteBtn);
+                }
+            } else if (isBabyLocked) {
+                const lockedLabel = document.createElement('div');
+                lockedLabel.className = 'purchased-label';
+                lockedLabel.textContent = '🔒 Спочатку черниш';
+                infoContainer.appendChild(lockedLabel);
+            } else {
+                const button = document.createElement('button');
+                button.className = 'buy-button';
+                button.textContent = 'КУПИТИ';
+                button.onclick = function () {
+                    buyItem(item.id, category, button, item.price);
+                };
+                infoContainer.appendChild(button);
+            }
+
+            itemElement.appendChild(image);
+            itemElement.appendChild(infoContainer);
+
+            return itemElement;
+        }
+
+        // Функція покупки корму
+        function buyFood(food, button) {
+            // Перевірка монет
+            if (coins < food.price) {
+                alert('Недостатньо монет для покупки корму.');
+                return;
+            }
+            // Списуємо монети
+            coins -= food.price;
+            updateBalanceUI();
+            saveGameState();
+            // Блокуємо всі кнопки покупки корму
+            const allFoodButtons = document.querySelectorAll('.food-category .buy-button');
+            allFoodButtons.forEach(btn => {
+                btn.classList.add('loading');
+                btn.disabled = true;
+            });
+
+            // Показуємо анімацію завантаження для натиснутої кнопки
+            button.classList.add('loading');
+            button.disabled = true;
+
+            // Приховуємо стікери злості або сну
+            hideEmote();
+
+            // Зупиняємо дії кота
+            stopCatActions();
+
+            // Відправляємо кота їсти
+            feedCatSequence(food.hunger, food.energy, function () {
+                // Після завершення годування
+                allFoodButtons.forEach(btn => {
+                    btn.classList.remove('loading');
+                    btn.disabled = false;
+                });
+
+                button.classList.remove('loading');
+                button.disabled = false;
+
+                console.log(`Котик з'їв ${food.name} та відновив ${food.energy} енергії!`);
+            });
+        }
+
+        function showMoreItems(category) {
+            const shopContent = document.getElementById('shopContent');
+            const viewMoreBtn = document.querySelector('.view-more');
+            if (viewMoreBtn) viewMoreBtn.remove();
+
+            for (let i = 5; i <= 8; i++) {
+                shopContent.appendChild(createShopItem(i, category));
+            }
+
+            shopContent.scrollTop = shopContent.scrollHeight;
+        }
+
+        let currentItem = null;
+
+        function buyItem(itemId, category, button, price) {
+            const item = {
+                id: itemId,
+                name: `${category} ${itemId}`,
+                category: category
+            };
+            if (typeof price !== 'number') {
+                price = 0;
+            }
+            if (coins < price) {
+                alert('Недостатньо монет для покупки цього предмета.');
+                return;
+            }
+            coins -= price;
+            updateBalanceUI();
+
+            if (normalizeCategory(category).replace(/\s/g, '').toLowerCase() === 'миски') {
+                replaceBowl(itemId);
+                currentBowlId = itemId;
+                loadCategoryItems(category);
+                saveGameState();
+            } else if (category === 'Фарм') {
+                // Видаляємо всі попередні покупки з категорії 'Фарм'
+                purchasedItems = purchasedItems.filter(item => normalizeCategory(item.category) !== 'Фарм');
+                // Очищаємо галерею (видаляємо квіточку/кактус з тумбочки)
+                let gallery = document.getElementById('flowerGallery');
+                if (gallery) {
+                    gallery.innerHTML = '';
+                    gallery.style.display = 'none';
+                    if (gallery.parentElement && gallery.parentElement.classList.contains('placed-item') && gallery.parentElement.classList.contains('tumb')) {
+                        gallery.parentElement.removeChild(gallery);
+                    }
+                }
+                // Зупиняю всі анімації Фарм перед запуском нової
+                stopAllFarmAnimations();
+                // Додаємо новий куплений предмет (без перевірки isPurchased)
+                purchasedItems.push({ category: category, id: itemId });
+                // --- Додаю flowerGallery у DOM, якщо його немає ---
+                const tumb = document.querySelector('.placed-item.tumb');
+                gallery = document.getElementById('flowerGallery');
+                if (tumb && !gallery) {
+                    gallery = document.createElement('div');
+                    gallery.id = 'flowerGallery';
+                    gallery.style.display = 'flex';
+                    gallery.style.flexDirection = 'column';
+                    gallery.style.alignItems = 'center';
+                    gallery.style.marginTop = '70px';
+                    tumb.appendChild(gallery);
+                } else if (tumb && gallery && gallery.parentElement !== tumb) {
+                    tumb.appendChild(gallery);
+                }
+                // --- Кінець додавання flowerGallery ---
+                if (itemId === 1) {
+                    startFlowerGallery();
+                } else if (itemId === 2) {
+                    startCactusGallery();
+                } else if (itemId === 3) {
+                    startMushroomGallery();
+                }
+                setTimeout(function() {
+                    const gallery = document.getElementById('flowerGallery');
+                    const tumb = document.querySelector('.placed-item.tumb');
+                    if (gallery && tumb) {
+                        gallery.style.position = 'absolute';
+                        gallery.style.left = '50%';
+                        gallery.style.bottom = '79%';
+                        gallery.style.transform = 'translateX(-50%)';
+                        gallery.style.zIndex = '10';
+                        tumb.appendChild(gallery);
+                    }
+                    saveGameState();
+                }, 100);
+                loadCategoryItems(category);
+                registerFarmOnceTask();
+                registerPurchaseForTask(category);
+            } else if (normalizeCategory(category) === 'Таємна') {
+                purchasedItems.push({ category: category, id: itemId });
+                if (itemId === 1) {
+                    const bc = document.querySelector('.black-cat');
+                    if (bc) bc.style.display = 'block';
+                } else if (itemId === 2) {
+                    const bb = document.querySelector('.baby-cat');
+                    if (bb) bb.style.display = 'block';
+                }
+                saveGameState(); // Зберігаємо після покупки секретного кота
+                loadCategoryItems(category);
+                registerPurchaseForTask(category);
+                return;
+            } else {
+                saveGameState();
+                currentItem = document.createElement('div');
+                currentItem.className = 'placed-item';
+                currentItem.dataset.category = category;
+                currentItem.dataset.id = itemId;
+                if (category === 'Тумбочки') currentItem.classList.add('tumb');
+                if (category === 'Картини') {
+                    currentItem.classList.add('picture');
+                    currentItem.style.transform = getPictureRotation(itemId);
+                }
+                if (category === 'Іграшки') currentItem.classList.add('toy');
+                currentItem.style.backgroundImage = (category === 'Іграшки')
+                    ? `url('shop/toy_${itemId}.png')`
+                    : `url('shop/${category}_${itemId}.png')`;
+                currentItem.style.left = `${window.innerWidth / 2 - 50}px`;
+                currentItem.style.top = `${window.innerHeight / 2 - 50}px`;
+                document.body.appendChild(currentItem);
+
+                addMovementButtons(currentItem);
+
+                const placementControls = document.getElementById('placementControls');
+                placementControls.style.display = 'flex';
+                registerPurchaseForTask(category);
+            }
+        }
+
+        function replaceBowl(itemId) {
+            // Видаляємо стару миску, якщо вона є
+            if (currentBowl) {
+                currentBowl.remove();
+            }
+
+            // Створюємо нову миску
+            currentBowl = document.createElement('img');
+            currentBowl.id = 'bowl';
+            currentBowl.src = `shop/Миски_${itemId}.png`;
+            currentBowl.alt = 'Миска';
+            currentBowl.style.position = 'absolute';
+            currentBowl.style.bottom = '10px';
+            currentBowl.style.right = '10px';
+            currentBowl.style.width = '80px';
+            currentBowl.style.height = '80px';
+            currentBowl.style.cursor = 'pointer';
+            currentBowl.style.zIndex = '1';
+
+            // Додаємо обробник для годування
+            currentBowl.addEventListener('click', () => {
+                if (isEating) {
+                    console.log('Котик вже їсть');
+                    return;
+                }
+                if (coins < BOWL_FEED_COST) {
+                    alert('Недостатньо монет для годування з миски.');
+                    return;
+                }
+                coins -= BOWL_FEED_COST;
+                updateBalanceUI();
+                console.log('Користувач натиснув на миску');
+                hideEmote(); // Приховуємо смайлики перед початком руху до миски
+                feedCatSequence();
+            });
+
+            // Додаємо нову миску до документа
+            document.body.appendChild(currentBowl);
+        }
+
+        // Функції для завдань
+        function openTasks() {
+            const tasksOverlay = document.getElementById('tasksOverlay');
+            const tasksContent = document.getElementById('tasksContent');
+            loadTasksState();
+            tasksContent.innerHTML = '';
+
+            // Щоденне завдання: Вхід
+            const dailyEl = document.createElement('div');
+            dailyEl.className = 'task-item';
+            const dailyInfo = document.createElement('div');
+            dailyInfo.className = 'task-info';
+            const dailyName = document.createElement('div');
+            dailyName.className = 'task-name';
+            
+            // Логіка streak (серії входів)
+            if (!tasksState.dailyLogin.streak) tasksState.dailyLogin.streak = 1;
+            const currentStreak = tasksState.dailyLogin.streak;
+            const currentReward = 10 + (currentStreak * 10); // 20, 30, 40, 50, 60
+            
+            dailyName.textContent = `Вхід щодня (День ${currentStreak}/5)`;
+            const dailyReward = document.createElement('div');
+            dailyReward.className = 'task-reward';
+            dailyReward.textContent = `Нагорода: 🪙${currentReward}`;
+            
+            const dailyBtn = document.createElement('button');
+            dailyBtn.className = 'task-button';
+            const dlLeft = timeLeft(tasksState.dailyLogin.nextAvailable);
+            
+            if (dlLeft === 0) {
+                dailyBtn.textContent = 'ОТРИМАТИ';
+                dailyBtn.onclick = function () {
+                    coins += currentReward;
+                    updateBalanceUI();
+                    
+                    // Оновлюємо streak: якщо 5-й день, скидаємо до 1, інакше +1
+                    if (tasksState.dailyLogin.streak >= 5) {
+                        tasksState.dailyLogin.streak = 1;
+                    } else {
+                        tasksState.dailyLogin.streak++;
+                    }
+                    
+                    tasksState.dailyLogin.nextAvailable = nowMs() + DAY_MS;
+                    saveTasksState();
+                    saveGameState(); // Зберігаємо баланс монет
+                    openTasks();
+                };
+            } else {
+                dailyBtn.textContent = `Очікуйте ${formatTime(dlLeft)}`;
+                dailyBtn.disabled = true;
+            }
+            dailyInfo.appendChild(dailyName);
+            dailyInfo.appendChild(dailyReward);
+            dailyEl.appendChild(dailyInfo);
+            dailyEl.appendChild(dailyBtn);
+            tasksContent.appendChild(dailyEl);
+
+            // Завдання: Покорми котика 5 разів (щоденне, таймер від моменту виконання)
+            const feedEl = document.createElement('div');
+            feedEl.className = 'task-item';
+            const feedInfo = document.createElement('div');
+            feedInfo.className = 'task-info';
+            const feedName = document.createElement('div');
+            feedName.className = 'task-name';
+            feedName.textContent = 'Покорми котика 5 разів';
+            const feedReward = document.createElement('div');
+            feedReward.className = 'task-reward';
+            feedReward.textContent = `Нагорода: 🪙${tasksState.feed5.reward} | Прогрес: ${tasksState.feed5.count}/5`;
+            const feedBtn = document.createElement('button');
+            feedBtn.className = 'task-button';
+            const fLeft = timeLeft(tasksState.feed5.nextAvailable);
+            if (fLeft > 0) {
+                feedBtn.textContent = `Очікуйте ${formatTime(fLeft)}`;
+                feedBtn.disabled = true;
+            } else {
+                feedBtn.textContent = 'Годуйте котика';
+                feedBtn.disabled = true;
+            }
+            feedInfo.appendChild(feedName);
+            feedInfo.appendChild(feedReward);
+            feedEl.appendChild(feedInfo);
+            feedEl.appendChild(feedBtn);
+            tasksContent.appendChild(feedEl);
+
+            // Завдання: Покупка нового предмета (щоденне)
+            const shopEl = document.createElement('div');
+            shopEl.className = 'task-item';
+            const shopInfo = document.createElement('div');
+            shopInfo.className = 'task-info';
+            const shopName = document.createElement('div');
+            shopName.className = 'task-name';
+            shopName.textContent = 'Купи новий предмет у магазині';
+            const shopReward = document.createElement('div');
+            shopReward.className = 'task-reward';
+            shopReward.textContent = `Нагорода: 🪙${tasksState.purchaseDaily.reward}`;
+            const shopBtn = document.createElement('button');
+            shopBtn.className = 'task-button';
+            const pLeft = timeLeft(tasksState.purchaseDaily.nextAvailable);
+            if (pLeft > 0) {
+                shopBtn.textContent = `Очікуйте ${formatTime(pLeft)}`;
+                shopBtn.disabled = true;
+            } else {
+                shopBtn.textContent = 'Купіть будь-який предмет';
+                shopBtn.disabled = true;
+            }
+            shopInfo.appendChild(shopName);
+            shopInfo.appendChild(shopReward);
+            shopEl.appendChild(shopInfo);
+            shopEl.appendChild(shopBtn);
+            tasksContent.appendChild(shopEl);
+
+            // Завдання: Купити предмет з розділу Фарм (одноразове)
+            const farmEl = document.createElement('div');
+            farmEl.className = 'task-item';
+            const farmInfo = document.createElement('div');
+            farmInfo.className = 'task-info';
+            const farmName = document.createElement('div');
+            farmName.className = 'task-name';
+            farmName.textContent = 'Купи предмет з розділу Фарм (1 раз за гру)';
+            const farmReward = document.createElement('div');
+            farmReward.className = 'task-reward';
+            farmReward.textContent = `Нагорода: 🪙${tasksState.farmOnce.reward}`;
+            const farmBtn = document.createElement('button');
+            farmBtn.className = 'task-button';
+            if (tasksState.farmOnce.completed) {
+                farmBtn.textContent = 'Виконано';
+                farmBtn.disabled = true;
+            } else {
+                farmBtn.textContent = 'Купіть у Фарм';
+                farmBtn.disabled = true;
+            }
+            farmInfo.appendChild(farmName);
+            farmInfo.appendChild(farmReward);
+            farmEl.appendChild(farmInfo);
+            farmEl.appendChild(farmBtn);
+            tasksContent.appendChild(farmEl);
+
+            // --- Завдання дня (Комплексне) ---
+            const complexEl = document.createElement('div');
+            complexEl.className = 'task-item complex-task';
+            const complexInfo = document.createElement('div');
+            complexInfo.className = 'task-info';
+            const complexName = document.createElement('div');
+            complexName.className = 'task-name';
+            complexName.textContent = '📋 Завдання дня';
+            
+            const task = tasksState.dailyComplex;
+            const complexReward = document.createElement('div');
+            complexReward.className = 'task-reward';
+            complexReward.textContent = `Нагорода: 🪙${task.reward}`;
+            
+            const progressContainer = document.createElement('div');
+            progressContainer.style.fontSize = '12px';
+            progressContainer.style.color = '#ccc';
+            progressContainer.style.marginTop = '5px';
+            
+            const p1 = document.createElement('div');
+            p1.textContent = `• Погладь котика: ${task.petCount}/10`;
+            p1.style.color = task.petCount >= 10 ? '#4caf50' : '#ccc';
+            
+            const p2 = document.createElement('div');
+            p2.textContent = `• Злови монети: ${task.coinsCaught}/3`;
+            p2.style.color = task.coinsCaught >= 3 ? '#4caf50' : '#ccc';
+            
+            const p3 = document.createElement('div');
+            p3.textContent = `• Вирости рослину: ${task.farmGrown ? 'Так' : 'Ні'}`;
+            p3.style.color = task.farmGrown ? '#4caf50' : '#ccc';
+            
+            progressContainer.appendChild(p1);
+            progressContainer.appendChild(p2);
+            progressContainer.appendChild(p3);
+            
+            const complexBtn = document.createElement('button');
+            complexBtn.className = 'task-button';
+            const cLeft = timeLeft(task.nextAvailable);
+            
+            if (cLeft > 0) {
+                complexBtn.textContent = `Очікуйте ${formatTime(cLeft)}`;
+                complexBtn.disabled = true;
+            } else {
+                if (task.petCount >= 10 && task.coinsCaught >= 3 && task.farmGrown) {
+                    complexBtn.textContent = 'ОТРИМАТИ';
+                    complexBtn.onclick = function() {
+                        checkDailyComplexTask();
+                        openTasks();
+                    };
+                } else {
+                    complexBtn.textContent = 'У процесі';
+                    complexBtn.disabled = true;
+                }
+            }
+            
+            complexInfo.appendChild(complexName);
+            complexInfo.appendChild(complexReward);
+            complexInfo.appendChild(progressContainer);
+            complexEl.appendChild(complexInfo);
+            complexEl.appendChild(complexBtn);
+            tasksContent.appendChild(complexEl);
+
+            tasksOverlay.style.display = 'flex';
+            setTimeout(() => {
+                tasksOverlay.style.opacity = '1';
+            }, 10);
+        }
+
+        function closeTasks() {
+            const tasksOverlay = document.getElementById('tasksOverlay');
+            tasksOverlay.style.opacity = '0';
+            setTimeout(() => {
+                tasksOverlay.style.display = 'none';
+            }, 300);
+        }
+
+        function registerFeedingForTask() {
+            loadTasksState();
+            if (timeLeft(tasksState.feed5.nextAvailable) > 0) {
+                saveTasksState();
+                return;
+            }
+            tasksState.feed5.count = (tasksState.feed5.count || 0) + 1;
+            if (tasksState.feed5.count >= 5) {
+                coins += tasksState.feed5.reward;
+                updateBalanceUI();
+                tasksState.feed5.count = 0;
+                tasksState.feed5.nextAvailable = nowMs() + DAY_MS;
+                saveGameState(); // Save reward coins
+            }
+            saveTasksState();
+        }
+        function registerPurchaseForTask(category) {
+            loadTasksState();
+            const norm = normalizeCategory(category);
+            if (timeLeft(tasksState.purchaseDaily.nextAvailable) === 0 && norm !== 'Корм') {
+                coins += tasksState.purchaseDaily.reward;
+                updateBalanceUI();
+                tasksState.purchaseDaily.nextAvailable = nowMs() + DAY_MS;
+                saveTasksState();
+                saveGameState(); // Save reward coins
+            }
+        }
+        function registerFarmOnceTask() {
+            loadTasksState();
+            if (!tasksState.farmOnce.completed) {
+                tasksState.farmOnce.completed = true;
+                coins += tasksState.farmOnce.reward;
+                updateBalanceUI();
+                saveTasksState();
+            }
+        }
+
+        function registerFarmHarvestTask() {
+            loadTasksState();
+            if (timeLeft(tasksState.dailyComplex.nextAvailable) === 0) {
+                tasksState.dailyComplex.farmGrown = true;
+                checkDailyComplexTask();
+                saveTasksState();
+                saveGameState(); // Ensure all progress is captured
+            }
+        }
+
+        function checkDailyComplexTask() {
+            if (timeLeft(tasksState.dailyComplex.nextAvailable) > 0) return;
+            
+            const task = tasksState.dailyComplex;
+            if (task.petCount >= 10 && task.coinsCaught >= 3 && task.farmGrown) {
+                coins += task.reward;
+                updateBalanceUI();
+                task.nextAvailable = nowMs() + DAY_MS;
+                // Reset for next time
+                task.petCount = 0;
+                task.coinsCaught = 0;
+                task.farmGrown = false;
+                alert('Вітаємо! Ви виконали Завдання дня та отримали 🪙70!');
+                saveTasksState();
+                saveGameState(); // Save coins balance
+            }
+        }
+
+        function choosePlacement(item) {
+            const placementOverlay = document.getElementById('placementOverlay');
+            const placementGrid = document.getElementById('placementGrid');
+
+            // Очищаємо попередні місця
+            placementGrid.innerHTML = '';
+
+            // Додаємо клікабельні місця
+            // Очищаємо попередні місця
+            placementGrid.innerHTML = '';
+
+            // Додаємо клікабельні місця
+            for (let i = 0; i < 9; i++) {
+                const place = document.createElement('div');
+                place.textContent = i + 1; // Нумерація місць
+                place.onclick = function () {
+                    placeItem(item, i + 1); // Розміщуємо предмет
+                };
+                placementGrid.appendChild(place);
+            }
+
+            // Відображаємо вибір місця
+            placementOverlay.style.display = 'flex';
+        }
+
+        function cancelPlacement() {
+            // Видаляємо предмет і скасовуємо розміщення
+            if (currentItem) {
+                currentItem.remove();
+                currentItem = null;
+            }
+            cleanupPlacement();
+        }
+
+        // Додаю мапу відповідностей для категорій
+        const categoryMap = {
+            'tumbочки': 'Тумбочки',
+            'іграшки': 'Іграшки',
+            'igrashki': 'Іграшки',
+            'toy': 'Іграшки',
+            'tumb': 'Тумбочки',
+            'картини': 'Картини',
+            'kartini': 'Картини',
+            'lamпи': 'Лампи',
+            'lamps': 'Лампи',
+            'миски': 'Миски',
+            'misky': 'Миски',
+            'farm': 'Фарм',
+            'таємна': 'Таємна',
+            'taemna': 'Таємна',
+            // додайте інші категорії за потреби
+        };
+        function normalizeCategory(cat) {
+            cat = cat.toLowerCase();
+            return categoryMap[cat] || cat[0].toUpperCase() + cat.slice(1);
+        }
+
+        function finalizePlacement() {
+            // Завершуємо розміщення
+            if (currentItem) {
+                // Визначаємо категорію та id з backgroundImage
+                let bg = currentItem.style.backgroundImage;
+                let match = bg.match(/shop\/([А-Яа-яA-Za-z]+)_(\d+)\.png/);
+                if (match) {
+                    // Якщо це toy, явно ставимо категорію Іграшки
+                    let category = (match[1] === 'toy') ? 'Іграшки' : normalizeCategory(match[1]);
+                    let id = parseInt(match[2]);
+                    if (!isPurchased(category, id)) {
+                        purchasedItems.push({ category: normalizeCategory(category), id });
+                        // ОНОВЛЕННЯ КАТЕГОРІЙ ДЛЯ ТУМБОЧКИ
+                        if (normalizeCategory(category) === 'Тумбочки') {
+                            if (document.getElementById('categoriesContainer')) {
+                                openShop();
+                            }
+                        }
+                    }
+                }
+                saveGameState(); // Зберігаємо стан після завершення розміщення
+            }
+            cleanupPlacement();
+            // Оновлюємо магазин (якщо відкритий)
+            const activeCat = document.querySelector('.category.active');
+            if (activeCat) loadCategoryItems(activeCat.textContent);
+        }
+
+        function cleanupPlacement() {
+            const buttons = document.querySelectorAll('.move-button');
+            buttons.forEach(button => button.remove());
+
+            const placementControls = document.getElementById('placementControls');
+            placementControls.style.display = 'none';
+
+            document.removeEventListener('keydown', moveItemWithArrows);
+        }
+
+        function placeItem(item, position) {
+            const placementOverlay = document.getElementById('placementOverlay');
+            placementOverlay.style.display = 'none';
+
+            // Логіка для розміщення предмета (крім Фарм)
+            if (item.category === 'Фарм') {
+                // Нічого не додаємо в кімнату
+                return;
+            }
+            const newItem = document.createElement('div');
+            newItem.className = 'placed-item';
+            if (item.category === 'Тумбочки') newItem.classList.add('tumb');
+            if (item.category === 'Картини') {
+                newItem.classList.add('picture');
+                newItem.style.transform = getPictureRotation(item.id);
+            }
+            if (item.category === 'Іграшки') newItem.classList.add('toy');
+            newItem.style.backgroundImage = (item.category === 'Іграшки')
+                ? `url('shop/toy_${item.id}.png')`
+                : `url('shop/${item.category.toLowerCase()}_${item.id}.png')`;
+            newItem.style.position = 'absolute';
+            newItem.style.left = `${50 + position * 50}px`;
+            newItem.style.top = `50px`;
+            document.body.appendChild(newItem);
+        }
+
+        function moveItemWithArrows(event) {
+            if (!currentItem) return;
+
+            const step = 10;
+            let deltaX = 0;
+            let deltaY = 0;
+
+            switch (event.key) {
+                case 'ArrowUp':
+                    deltaY = -step;
+                    break;
+                case 'ArrowDown':
+                    deltaY = step;
+                    break;
+                case 'ArrowLeft':
+                    deltaX = -step;
+                    break;
+                case 'ArrowRight':
+                    deltaX = step;
+                    break;
+            }
+
+            moveItem(currentItem, deltaX, deltaY);
+        }
+
+        function addMovementButtons(item) {
+            const directions = [
+                { name: 'up', x: 0, y: -10 },
+                { name: 'down', x: 0, y: 10 },
+                { name: 'left', x: -10, y: 0 },
+                { name: 'right', x: 10, y: 0 }
+            ];
+
+            const placementControls = document.getElementById('placementControls');
+            const rect = placementControls.getBoundingClientRect();
+
+            directions.forEach(direction => {
+                const button = document.createElement('button');
+                button.className = `move-button move-${direction.name}`;
+                button.textContent = direction.name === 'up' ? '↑' : direction.name === 'down' ? '↓' : direction.name === 'left' ? '←' : '→';
+                button.onclick = () => moveItem(item, direction.x, direction.y);
+
+                // Позиціонуємо кнопки над кнопками "Готово" та "Скасувати"
+                switch (direction.name) {
+                    case 'up':
+                        button.style.left = `${rect.left + rect.width / 2 - button.offsetWidth / 2}px`;
+                        button.style.top = `${rect.top - 60}px`; // Над кнопками
+                        break;
+                    case 'down':
+                        button.style.left = `${rect.left + rect.width / 2 - button.offsetWidth / 2}px`;
+                        button.style.top = `${rect.top - 10}px`; // Трохи вище кнопок
+                        break;
+                    case 'left':
+                        button.style.left = `${rect.left - button.offsetWidth - 10}px`;
+                        button.style.top = `${rect.top - 35}px`; // Вирівнюємо по вертикалі
+                        break;
+                    case 'right':
+                        button.style.left = `${rect.right + 10}px`;
+                        button.style.top = `${rect.top - 35}px`; // Вирівнюємо по вертикалі
+                        break;
+                }
+
+                document.body.appendChild(button);
+            });
+        }
+
+        function moveItem(item, deltaX, deltaY) {
+            let currentLeft = parseInt(item.style.left) || 0;
+            let currentTop = parseInt(item.style.top) || 0;
+
+            let newLeft = currentLeft + deltaX;
+            let newTop = currentTop + deltaY;
+
+            const parentRect = document.body.getBoundingClientRect();
+            const itemWidth = item.offsetWidth;
+            const itemHeight = item.offsetHeight;
+
+            if (newLeft < 0) newLeft = 0;
+            if (newTop < 0) newTop = 0;
+            
+            if (item.classList.contains('tumb')) {
+                const maxLeft = parentRect.width - itemWidth - 10;
+                if (newLeft > maxLeft) {
+                    newLeft = maxLeft;
+                }
+            } else {
+                if (newLeft + itemWidth > parentRect.width) newLeft = parentRect.width - itemWidth;
+            }
+
+            if (newTop + itemHeight > parentRect.height) newTop = parentRect.height - itemHeight;
+
+            item.style.left = `${newLeft}px`;
+            item.style.top = `${newTop}px`;
+
+            updateButtonPositions(item);
+        }
+
+        function updateButtonPositions(item) {
+            const buttons = document.querySelectorAll('.move-button');
+            const rect = item.getBoundingClientRect();
+
+            buttons.forEach(button => {
+                if (button.classList.contains('move-up')) {
+                    button.style.left = `${rect.left + rect.width / 2 - button.offsetWidth / 2}px`;
+                    button.style.top = `${rect.top - button.offsetHeight - 10}px`;
+                } else if (button.classList.contains('move-down')) {
+                    button.style.left = `${rect.left + rect.width / 2 - button.offsetWidth / 2}px`;
+                    button.style.top = `${rect.bottom + 10}px`;
+                } else if (button.classList.contains('move-left')) {
+                    button.style.left = `${rect.left - button.offsetWidth - 10}px`;
+                    button.style.top = `${rect.top + rect.height / 2 - button.offsetHeight / 2}px`;
+                } else if (button.classList.contains('move-right')) {
+                    button.style.left = `${rect.right + 10}px`;
+                    button.style.top = `${rect.top + rect.height / 2 - button.offsetHeight / 2}px`;
+                }
+            });
+        }
+
+        function initializeBowl() {
+            // Встановлюємо збережену миску або дефолтну (id = 1)
+            replaceBowl(currentBowlId || 1);
+        }
+
+
+        function getPictureRotation(id) {
+            // Дуже маленькі кути для майже непомітного нахилу
+            const angles = [
+                -1.2, 0.8, -0.7, 1.1, 0.5, -0.6, 1.2, -1.1
+            ];
+            return `rotate(${angles[(id - 1) % angles.length]}deg)`;
+        }
+
+        let purchasedItems = [];
+
+        function isPurchased(category, id) {
+            const normCat = normalizeCategory(category);
+            if (normCat.replace(/\s/g, '').toLowerCase() === 'миски') {
+                return id === currentBowlId;
+            }
+            if (normCat.replace(/\s/g, '').toLowerCase() === 'фарм') {
+                return purchasedItems.some(item => normalizeCategory(item.category) === normCat && item.id === id);
+            }
+            return purchasedItems.some(item => normalizeCategory(item.category) === normCat && item.id === id);
+        }
+
+        function removePurchased(category, id) {
+            const normCat = normalizeCategory(category);
+            const before = purchasedItems.length;
+            purchasedItems = purchasedItems.filter(item => !(normalizeCategory(item.category) === normCat && item.id === id));
+            const after = purchasedItems.length;
+            console.log(`[removePurchased] category: ${category}, id: ${id}, before: ${before}, after: ${after}`);
+            saveGameState(); // Зберігаємо стан після видалення
+        }
+
+        function getPlacedItemElement(category, id) {
+            // Пошук елемента в кімнаті за backgroundImage
+            const all = document.querySelectorAll('.placed-item');
+            for (const el of all) {
+                // Виправлення: для іграшок шукаємо toy_X.png
+                if (category === 'Іграшки') {
+                    if (el.style.backgroundImage.includes(`toy_${id}.png`)) return el;
+                } else {
+                    if (el.style.backgroundImage.includes(`${category.toLowerCase()}_${id}.png`)) return el;
+                }
+            }
+            return null;
+        }
+
+        // Модальне вікно підтвердження видалення
+        let deleteConfirmCallback = null;
+        function showDeleteConfirm(onConfirm) {
+            deleteConfirmCallback = onConfirm;
+            const modal = document.getElementById('deleteConfirmModal');
+            modal.style.display = 'flex';
+        }
+        function hideDeleteConfirm() {
+            const modal = document.getElementById('deleteConfirmModal');
+            modal.style.display = 'none';
+            deleteConfirmCallback = null;
+        }
+
+        // Функція для перевірки орієнтації екрану
+        function checkOrientation() {
+            const overlay = document.getElementById('rotateScreenOverlay');
+
+            // Перевіряємо чи екран горизонтальний і чи це мобільний пристрій
+            if (window.innerHeight < window.innerWidth && window.innerHeight < 600) {
+                overlay.style.display = 'flex';
+            } else {
+                overlay.style.display = 'none';
+            }
+        }
+
+        // Перевіряємо орієнтацію при завантаженні
+        window.addEventListener('load', checkOrientation);
+
+        // Перевіряємо орієнтацію при зміні розміру вікна
+        window.addEventListener('resize', checkOrientation);
+
+        // Перевіряємо орієнтацію при зміні орієнтації (для мобільних пристроїв)
+        window.addEventListener('orientationchange', function () {
+            setTimeout(checkOrientation, 100);
+        });
+
+        // --- Галерея росту квіточки ---
+        let flowerGalleryInterval = null;
+        let flowerCurrentStage = 0;
+        let flowerNextTs = 0;
+        const flowerImages = [
+            'shop/Фарм_1.png',
+            'shop/Фарм-2.png',
+            'shop/Фарм-3.png',
+            'shop/Фарм-4.png'
+        ];
+
+        // === Зупинка всіх анімацій Фарм ===
+        function stopAllFarmAnimations() {
+            if (flowerGalleryInterval) clearInterval(flowerGalleryInterval);
+            if (cactusGalleryInterval) clearInterval(cactusGalleryInterval);
+            if (mushroomGalleryInterval) clearInterval(mushroomGalleryInterval);
+            const gallery = document.getElementById('flowerGallery');
+            if (gallery) gallery.innerHTML = '';
+        }
+
+        function startFlowerGallery() {
+            const gallery = document.getElementById('flowerGallery');
+            if (!gallery) return;
+            gallery.style.display = 'flex';
+            flowerCurrentStage = 0;
+            renderFlowerGallery();
+            startFlowerInterval();
+        }
+
+        function renderFlowerGallery() {
+            const gallery = document.getElementById('flowerGallery');
+            if (!gallery) return;
+
+            gallery.innerHTML = '';
+            // Додаємо текст з стрілкою вниз тільки на останній стадії
+            if (flowerCurrentStage === 3) {
+                const label = document.createElement('div');
+                label.className = 'harvest-label';
+                label.innerHTML = 'Урожай <span style="font-size:21px;">↓</span>';
+                gallery.appendChild(label);
+            }
+            const img = document.createElement('img');
+            img.src = flowerImages[flowerCurrentStage];
+            img.className = 'flower-img' + (flowerCurrentStage === 0 ? ' small' : '');
+            img.alt = `Квітка етап ${flowerCurrentStage + 1}`;
+            if (flowerCurrentStage === 3) {
+                img.style.cursor = 'pointer';
+                img.onclick = function () {
+                    coins += HARVEST_REWARD_FLOWER;
+                    updateBalanceUI();
+                    registerFarmHarvestTask();
+                    flowerCurrentStage = 0;
+                    renderFlowerGallery();
+                    startFlowerInterval();
+                };
+            } else {
+                img.onclick = null;
+                img.style.cursor = 'default';
+            }
+            gallery.appendChild(img);
+        }
+
+        function startFlowerInterval() {
+            if (flowerGalleryInterval) clearInterval(flowerGalleryInterval);
+            const now = nowMs();
+            const nextTs = flowerNextTs && flowerNextTs > now ? flowerNextTs : now + FARM_STAGE_MS;
+            const delay = nextTs - now;
+            setTimeout(() => {
+                if (flowerCurrentStage < 3) {
+                    flowerCurrentStage++;
+                    flowerNextTs = nowMs() + FARM_STAGE_MS;
+                    renderFlowerGallery();
+                    saveGameState();
+                    if (flowerCurrentStage === 3) return;
+                    flowerGalleryInterval = setInterval(() => {
+                        if (flowerCurrentStage < 3) {
+                            flowerCurrentStage++;
+                            flowerNextTs = nowMs() + FARM_STAGE_MS;
+                            renderFlowerGallery();
+                            saveGameState();
+                            if (flowerCurrentStage === 3) clearInterval(flowerGalleryInterval);
+                        }
+                    }, FARM_STAGE_MS);
+                }
+            }, delay);
+        }
+
+        // --- Магазин: блокування Фарм до покупки тумбочки ---
+        function isTumbPurchased() {
+            return purchasedItems.some(item => normalizeCategory(item.category) === 'Тумбочки');
+        }
+
+        function openFarmLockModal() {
+            document.getElementById('farmLockModal').style.display = 'flex';
+        }
+        function closeFarmLockModal() {
+            document.getElementById('farmLockModal').style.display = 'none';
+        }
+        // Також закриваємо модалку по кліку на фон
+        const farmLockModal = document.getElementById('farmLockModal');
+        if (farmLockModal) {
+            farmLockModal.addEventListener('click', function (e) {
+                if (e.target === farmLockModal) closeFarmLockModal();
+            });
+        }
+
+        // === Додаю змінні для кактуса ===
+        let cactusGalleryInterval = null;
+        let cactusCurrentStage = 0;
+        let cactusNextTs = 0;
+        const cactusImages = [
+            'shop/ФармК-1.png',
+            'shop/ФармК-2.png',
+            'shop/ФармК-3.png',
+            'shop/ФармК-4.png'
+        ];
+
+        function startCactusGallery() {
+            const gallery = document.getElementById('flowerGallery');
+            if (!gallery) return;
+            gallery.style.display = 'flex';
+            cactusCurrentStage = 0;
+            renderCactusGallery();
+            startCactusInterval();
+        }
+
+        function renderCactusGallery() {
+            const gallery = document.getElementById('flowerGallery');
+            if (!gallery) return;
+            gallery.innerHTML = '';
+            if (cactusCurrentStage === 3) {
+                const label = document.createElement('div');
+                label.className = 'harvest-label-cactus';
+                label.innerHTML = 'Урожай <span style="font-size:21px;">↓</span>';
+                gallery.appendChild(label);
+            }
+            const img = document.createElement('img');
+            img.src = cactusImages[cactusCurrentStage];
+            if (cactusCurrentStage === 0) {
+                img.className = 'cactus-img small';
+            } else if (cactusCurrentStage === 1) {
+                img.className = 'cactus-img stage2';
+            } else if (cactusCurrentStage === 2) {
+                img.className = 'cactus-img stage3';
+            } else if (cactusCurrentStage === 3) {
+                img.className = 'cactus-img stage4';
+            } else {
+                img.className = 'flower-img';
+            }
+            img.alt = `Кактус етап ${cactusCurrentStage + 1}`;
+            if (cactusCurrentStage === 3) {
+                img.style.cursor = 'pointer';
+                img.onclick = function () {
+                    coins += HARVEST_REWARD_CACTUS;
+                    updateBalanceUI();
+                    registerFarmHarvestTask();
+                    cactusCurrentStage = 0;
+                    renderCactusGallery();
+                    startCactusInterval();
+                };
+            } else {
+                img.onclick = null;
+                img.style.cursor = 'default';
+            }
+            gallery.appendChild(img);
+        }
+
+        function startCactusInterval() {
+            if (cactusGalleryInterval) clearInterval(cactusGalleryInterval);
+            const now = nowMs();
+            const nextTs = cactusNextTs && cactusNextTs > now ? cactusNextTs : now + FARM_STAGE_MS;
+            const delay = nextTs - now;
+            setTimeout(() => {
+                if (cactusCurrentStage < 3) {
+                    cactusCurrentStage++;
+                    cactusNextTs = nowMs() + FARM_STAGE_MS;
+                    renderCactusGallery();
+                    saveGameState();
+                    if (cactusCurrentStage === 3) return;
+                    cactusGalleryInterval = setInterval(() => {
+                        if (cactusCurrentStage < 3) {
+                            cactusCurrentStage++;
+                            cactusNextTs = nowMs() + FARM_STAGE_MS;
+                            renderCactusGallery();
+                            saveGameState();
+                            if (cactusCurrentStage === 3) clearInterval(cactusGalleryInterval);
+                        }
+                    }, FARM_STAGE_MS);
+                }
+            }, delay);
+        }
+
+        // === Галерея росту грибочка ===
+        let mushroomGalleryInterval = null;
+        let mushroomCurrentStage = 0;
+        let mushroomNextTs = 0;
+        const mushroomImages = [
+            'shop/Гриб-1.png',
+            'shop/Гриб-2.png',
+            'shop/Гриб-3.png',
+            'shop/Гриб-4.png'
+        ];
+
+        function startMushroomGallery() {
+            const gallery = document.getElementById('flowerGallery');
+            if (!gallery) return;
+            gallery.style.display = 'flex';
+            mushroomCurrentStage = 0;
+            renderMushroomGallery();
+            startMushroomInterval();
+        }
+
+        function renderMushroomGallery() {
+            const gallery = document.getElementById('flowerGallery');
+            if (!gallery) return;
+            gallery.innerHTML = '';
+            if (mushroomCurrentStage === 3) {
+                const label = document.createElement('div');
+                label.className = 'harvest-label-mushroom';
+                label.innerHTML = 'Урожай <span style="font-size:21px;">↓</span>';
+                gallery.appendChild(label);
+            }
+            const img = document.createElement('img');
+            img.src = mushroomImages[mushroomCurrentStage];
+            img.className = 'flower-img';
+            img.alt = `Гриб етап ${mushroomCurrentStage + 1}`;
+            // Масштабування грибочка: перше фото ~50% від поточного розміру, інші — ~10% менші
+            if (mushroomCurrentStage === 0) {
+                // 50% від базової висоти 82px ≈ 41px
+                img.style.height = '25px';
+            } else {
+                // 10% менше від 82px ≈ 74px
+                img.style.height = '50px';
+            }
+            if (mushroomCurrentStage === 3) {
+                img.style.cursor = 'pointer';
+                img.onclick = function () {
+                    coins += HARVEST_REWARD_MUSHROOM;
+                    updateBalanceUI();
+                    registerFarmHarvestTask();
+                    mushroomCurrentStage = 0;
+                    renderMushroomGallery();
+                    startMushroomInterval();
+                };
+            } else {
+                img.onclick = null;
+                img.style.cursor = 'default';
+            }
+            gallery.appendChild(img);
+        }
+
+        function startMushroomInterval() {
+            if (mushroomGalleryInterval) clearInterval(mushroomGalleryInterval);
+            const now = nowMs();
+            const nextTs = mushroomNextTs && mushroomNextTs > now ? mushroomNextTs : now + FARM_STAGE_MS;
+            const delay = nextTs - now;
+            setTimeout(() => {
+                if (mushroomCurrentStage < 3) {
+                    mushroomCurrentStage++;
+                    mushroomNextTs = nowMs() + FARM_STAGE_MS;
+                    renderMushroomGallery();
+                    saveGameState();
+                    if (mushroomCurrentStage === 3) return;
+                    mushroomGalleryInterval = setInterval(() => {
+                        if (mushroomCurrentStage < 3) {
+                            mushroomCurrentStage++;
+                            mushroomNextTs = nowMs() + FARM_STAGE_MS;
+                            renderMushroomGallery();
+                            saveGameState();
+                            if (mushroomCurrentStage === 3) clearInterval(mushroomGalleryInterval);
+                        }
+                    }, FARM_STAGE_MS);
+                }
+            }, delay);
+        }
+
+        function spawnFallingCoin() {
+            const el = document.createElement('div');
+            el.style.position = 'fixed';
+            el.style.top = '-40px';
+            el.style.left = `${Math.floor(Math.random() * (window.innerWidth - 40))}px`;
+            el.style.fontSize = '32px';
+            el.style.lineHeight = '32px';
+            el.style.width = '32px';
+            el.style.height = '32px';
+            el.style.textAlign = 'center';
+            el.style.cursor = 'pointer';
+            el.style.zIndex = '9999';
+            el.style.transition = 'transform 4s linear';
+            el.textContent = '🪙';
+            let rewarded = false;
+            el.onclick = function () {
+                if (rewarded) return;
+                rewarded = true;
+                coins += FALL_COIN_REWARD;
+                updateBalanceUI();
+                
+                // Track for daily complex task
+                if (timeLeft(tasksState.dailyComplex.nextAvailable) === 0) {
+                    tasksState.dailyComplex.coinsCaught++;
+                    checkDailyComplexTask();
+                    saveTasksState();
+                }
+
+                if (el.parentNode) el.parentNode.removeChild(el);
+            };
+            document.body.appendChild(el);
+            setTimeout(() => {
+                el.style.transform = `translateY(${window.innerHeight + 80}px)`;
+            }, 20);
+            setTimeout(() => {
+                if (el.parentNode) el.parentNode.removeChild(el);
+            }, 4000);
+        }
+
+        function startFallingCoins() {
+            setInterval(spawnFallingCoin, FALL_COIN_INTERVAL_MS);
+        }
+
+        function restoreSecretCats() {
+            purchasedItems.forEach(item => {
+                if (normalizeCategory(item.category) === 'Таємна') {
+                    if (item.id === 1) {
+                        const bc = document.querySelector('.black-cat');
+                        if (bc) bc.style.display = 'block';
+                    } else if (item.id === 2) {
+                        const bb = document.querySelector('.baby-cat');
+                        if (bb) bb.style.display = 'block';
+                    }
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadGameState();
+            loadTasksState();
+            initializeBowl();
+            restoreSecretCats();
+            updateBalanceUI();
+            updateBars();
+            startFallingCoins();
+
+            // Ініціалізація кнопок модального вікна секрету
+            const buyBtn = document.getElementById('secretUnlockBuyBtn');
+            const cancelBtn = document.getElementById('secretUnlockCancelBtn');
+            if (buyBtn) buyBtn.onclick = tryUnlockSecret;
+            if (cancelBtn) cancelBtn.onclick = closeSecretUnlockModal;
+
+            // Ініціалізація кнопок модального вікна видалення
+            const delYes = document.getElementById('deleteConfirmYes');
+            const delNo = document.getElementById('deleteConfirmNo');
+            if (delYes) delYes.onclick = function () {
+                if (deleteConfirmCallback) deleteConfirmCallback();
+                hideDeleteConfirm();
+            };
+            if (delNo) delNo.onclick = hideDeleteConfirm;
+        });
+
+    </script>
+
+</body>
+
+</html>

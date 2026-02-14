@@ -1,0 +1,1379 @@
+        @font-face {
+            font-family: 'Press Start 2P', cursive;
+            src: url('fonts/pixel.ttf') format('truetype');
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            background: url('photo/fon-game.png') no-repeat center center;
+            background-size: cover;
+            overflow: hidden;
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        /* Верхнє меню */
+        .top-menu {
+            width: 100%;
+            height: 50px;
+            background-color: #222;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.7);
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 100;
+        }
+
+        .menu-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .menu-button {
+            background: linear-gradient(145deg, #ff8c00, #ff6b00);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-family: 'Press Start 2P', cursive;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            text-shadow: 1px 1px 2px #000;
+        }
+
+        .menu-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .menu-button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .balance {
+            color: white;
+            font-size: 18px;
+            font-family: 'Press Start 2P', cursive;
+            text-shadow: 2px 2px 4px #000;
+            display: flex;
+            /* Додаємо flex-контейнер */
+            align-items: center;
+            /* Вирівнюємо елементи по вертикалі */
+            gap: 5px;
+            /* Відступ між елементами */
+            line-height: 1.2;
+            /* Фіксуємо висоту рядка */
+        }
+
+        @media (max-width: 600px) {
+            .top-menu {
+                flex-direction: column;
+                height: auto;
+                padding: 10px 0;
+                align-items: center;
+            }
+
+            .menu-button {
+                width: 90%;
+                margin: 5px 0;
+                font-size: 14px;
+            }
+
+            .balance {
+                font-size: 16px;
+            }
+        }
+
+        .cat {
+            position: absolute;
+            width: 110px;
+            height: 118px;
+            background: url('photo/cat-game.png') no-repeat;
+            background-size: 480px 960px;
+            image-rendering: pixelated;
+            transition: transform 0.5s linear, left 0.5s linear, top 0.5s linear;
+            z-index: 5;
+            filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.5));
+        }
+
+        .black-cat {
+            position: absolute;
+            width: 110px;
+            height: 118px;
+            background: url('photo/cat-black.png') no-repeat;
+            background-size: 480px 960px;
+            background-position: 0 0;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            transition: transform 0.5s linear, left 0.5s linear, top 0.5s linear;
+            z-index: 5;
+            filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.5));
+        }
+
+        #bowl {
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+            user-select: none;
+            -webkit-user-drag: none;
+            filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.5));
+        }
+
+        .status-bars {
+            position: absolute;
+            top: 65px;
+            left: 1px;
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            z-index: 100;
+            filter: drop-shadow(2px 4px 4px rgba(0, 0, 0, 0.5));
+        }
+
+        .emote {
+            position: absolute;
+            font-size: 28px;
+            z-index: 999;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            filter: drop-shadow(2px 4px 4px rgba(0, 0, 0, 0.7));
+        }
+
+        .emote.angry {
+            animation: angryBounce 0.5s infinite alternate;
+            top: -20px;
+            left: 35px;
+        }
+
+        .emote.sleep {
+            animation: sleepZzz 2s infinite linear;
+            top: -20px;
+            left: 40px;
+        }
+
+        /* Стилі для магазину */
+        .shop-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .shop-container {
+            width: 90%;
+            max-width: 800px;
+            height: 80%;
+            background: linear-gradient(145deg, #2a2a2a, #1f1f1f);
+            border: 4px solid #8a2be2;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6),
+                0 0 0 2px #ff8c00,
+                0 0 0 4px #8a2be2;
+            transform: scale(0.95);
+            transition: all 0.3s ease;
+        }
+
+        .shop-overlay.show .shop-container {
+            transform: scale(1);
+        }
+
+        .shop-header {
+            background: linear-gradient(to right, #8a2be2, #4b0082);
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            border-bottom: 3px solid #ff8c00;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+        }
+
+
+        .shop-header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 1px;
+            width: 100%;
+        }
+
+        .shop-header-top .balance {
+            font-size: 14px;
+            color: white;
+            flex: 1;
+            text-align: left;
+        }
+
+        .shop-title {
+            background: linear-gradient(145deg, #ff8c00, #ff6b00);
+            color: white;
+            font-size: 14px;
+            padding: 10px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            text-shadow: 1px 1px 2px #000;
+            border: 2px solid #8a2be2;
+            margin: 0 10px;
+            text-align: center;
+            flex: 2;
+        }
+
+        .shop-title:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+
+
+        .categories-container {
+            display: flex;
+            overflow-x: auto;
+            gap: 10px;
+            padding: 10px 1px;
+            scrollbar-width: thin;
+            scrollbar-color: #8a2be2 #333;
+        }
+
+        .categories-container::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .categories-container::-webkit-scrollbar-track {
+            background: #333;
+            border-radius: 3px;
+        }
+
+        .categories-container::-webkit-scrollbar-thumb {
+            background: linear-gradient(#8a2be2, #4b0082);
+            border-radius: 3px;
+        }
+
+        .category {
+            background: linear-gradient(145deg, #3a3a3a, #2d2d2d);
+            border: 2px solid #8a2be2;
+            border-radius: 8px;
+
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            flex-shrink: 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            position: relative;
+            margin-right: 8px;
+            min-width: 120px;
+            min-height: 40px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+        }
+
+        .category:last-child {
+            margin-right: 0;
+        }
+
+        .category.locked {
+            background: linear-gradient(145deg, #555, #333) !important;
+            border-color: #888 !important;
+            color: #bbb !important;
+            cursor: not-allowed !important;
+            opacity: 1 !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10);
+            min-width: 120px;
+            min-height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+        }
+
+        .category.locked .lock-icon {
+            display: inline-block;
+            font-size: 16px;
+            vertical-align: middle;
+            margin-right: 0;
+        }
+
+        .category:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: -5px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1px;
+            height: 60%;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .category:hover {
+            background: linear-gradient(145deg, #4a4a4a, #3d3d3d);
+            transform: translateY(-2px);
+        }
+
+        .category.active {
+            background: linear-gradient(145deg, #8a2be2, #4b0082);
+            border-color: #ff8c00;
+            box-shadow: 0 0 10px rgba(138, 43, 226, 0.7);
+        }
+
+        .close-shop {
+            background: #ff4444;
+            border: none;
+            color: white;
+            font-size: 24px;
+            /* Збільшений розмір */
+            font-weight: bold;
+            /* Жирний шрифт */
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            text-shadow: 1px 1px 2px #000;
+            flex: 0 0 auto;
+            /* Фіксована ширина */
+            width: 44px;
+            /* Збільшена ширина */
+            height: 44px;
+            /* Збільшена висота */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: -1px;
+            /* Відступ зліва */
+            position: relative;
+            /* Для точного позиціонування */
+            right: 0;
+            /* Фіксуємо праворуч */
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+        }
+
+        /* Збільшений хрестик при наведенні */
+        .close-shop:hover {
+            background: #ff0000;
+            transform: rotate(90deg) scale(1.1);
+            /* Додано масштабування */
+        }
+
+        /* Стилі для роздільної лінії */
+        .divider {
+            height: 2px;
+            background: linear-gradient(to right, transparent, #8a2be2, #ff8c00, #8a2be2, transparent);
+            margin: 5px 0;
+            width: 100%;
+        }
+
+        .shop-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            padding: 15px;
+            overflow-y: auto;
+            height: calc(100% - 150px);
+        }
+
+        .shop-item {
+            background: linear-gradient(145deg, #3a3a3a, #2d2d2d);
+            border: 2px solid #8a2be2;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            /* Зміна з row на column */
+            align-items: center;
+            /* Центруємо по горизонталі */
+            text-align: center;
+            /* Центруємо текст */
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            min-height: 210px;
+            height: auto;
+            width: 90%;
+            /* Додаємо ширину для кращого вигляду */
+            max-width: 400px;
+            /* Максимальна ширина */
+            margin: 0 auto;
+            /* Центруємо блок товару */
+        }
+
+        .shop-item::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(to bottom right,
+                    rgba(138, 43, 226, 0.1),
+                    rgba(255, 140, 0, 0.1));
+            transform: rotate(45deg);
+            z-index: 0;
+        }
+
+        .shop-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+            border-color: #ff8c00;
+        }
+
+        /* Адаптація для мобільних пристроїв */
+        @media (max-width: 600px) {
+            .shop-content {
+                padding: 10px;
+                gap: 10px;
+            }
+
+            .shop-item {
+                margin-bottom: 10px;
+            }
+
+            .close-shop {
+                font-size: 20px;
+                width: 40px;
+                height: 40px;
+            }
+        }
+
+        .item-image {
+            width: 120px;
+            height: 120px;
+            background-color: #222; /* темний фон, щоб не було прозорого */
+            margin-right: 20px;
+            border: 3px solid #555;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+            flex-shrink: 0;
+            background-size: contain;      /* показує всю картинку */
+            background-repeat: no-repeat;  /* не повторює */
+            background-position: center;
+        }
+
+        .item-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* Центруємо вміст */
+            width: 100%;
+            /* Займає всю ширину батьківського елементу */
+        }
+
+        .item-name {
+            color: white;
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-align: center;
+            /* Центруємо текст */
+            z-index: 1;
+            text-shadow: 1px 1px 2px #000;
+            width: 100%;
+            /* Займає всю доступну ширину */
+        }
+
+        .item-price {
+            color: #ff8c00;
+            font-size: 16px;
+            margin-bottom: 15px;
+            z-index: 1;
+            text-shadow: 1px 1px 2px #000;
+            text-align: center;
+            /* Центруємо текст */
+        }
+
+        .buy-button {
+            background: linear-gradient(145deg, #8a2be2, #4b0082);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            text-shadow: 1px 1px 2px #000;
+            border: 1px solid #ff8c00;
+            z-index: 1;
+            width: auto;
+            /* Зміна з 100% на auto */
+            max-width: 200px;
+            margin: 0 auto;
+            /* Центруємо кнопку */
+        }
+
+        .buy-button:hover {
+            background: linear-gradient(145deg, #9932cc, #5a1d9c);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        .buy-button:active {
+            transform: translateY(1px);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .buy-button.loading {
+            position: relative;
+            color: transparent;
+            pointer-events: none;
+        }
+
+        .buy-button.loading::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        @keyframes angryBounce {
+            from {
+                transform: translateY(0);
+            }
+
+            to {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes sleepZzz {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-30px);
+                opacity: 0;
+            }
+        }
+
+        /* Смуга прокрутки */
+        .shop-content::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .shop-content::-webkit-scrollbar-track {
+            background: #333;
+            border-radius: 5px;
+        }
+
+        .shop-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(#8a2be2, #4b0082);
+            border-radius: 5px;
+            border: 1px solid #ff8c00;
+        }
+
+        .shop-content::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(#9932cc, #5a1d9c);
+        }
+
+        /* Стилі для вікна завдань */
+        .tasks-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .tasks-container {
+            width: 90%;
+            max-width: 600px;
+            height: 70%;
+            background: linear-gradient(145deg, #2a2a2a, #1f1f1f);
+            border: 4px solid #ff8c00;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6),
+                0 0 0 2px #8a2be2,
+                0 0 0 4px #ff8c00;
+        }
+
+        .tasks-header {
+            background: linear-gradient(to right, #ff8c00, #ff6b00);
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #8a2be2;
+        }
+
+        .tasks-title {
+            color: white;
+            font-size: 18px;
+            text-align: center;
+            flex-grow: 1;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .close-tasks {
+            background: #8a2be2;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .tasks-content {
+            padding: 20px;
+            overflow-y: auto;
+            background: rgba(30, 30, 30, 0.7);
+        }
+
+        .task-item {
+            background: rgba(50, 50, 50, 0.7);
+            border: 2px solid #8a2be2;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .task-info {
+            flex-grow: 1;
+        }
+
+        .task-name {
+            color: white;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .task-reward {
+            color: #ff8c00;
+            font-size: 12px;
+        }
+
+        .task-button {
+            background: linear-gradient(145deg, #8a2be2, #4b0082);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            cursor: pointer;
+        }
+
+        /* Адаптація для мобільних пристроїв */
+        @media (max-width: 600px) {
+            .shop-item {
+                flex-direction: column;
+                padding: 15px;
+            }
+
+            .item-image {
+                width: 100px;
+                height: 100px;
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+
+            .buy-button {
+                max-width: 100%;
+                width: 100%;
+            }
+        }
+
+        /* Смуга прокрутки */
+        .shop-content::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        .shop-content::-webkit-scrollbar-track {
+            background: #333;
+            border-radius: 6px;
+        }
+
+        .shop-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(#8a2be2, #4b0082);
+            border-radius: 6px;
+            border: 2px solid #ff8c00;
+        }
+
+        .shop-content::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(#9932cc, #5a1d9c);
+        }
+
+        /* Стилі для кнопки завантаження */
+        .buy-button.loading {
+            position: relative;
+            color: transparent;
+            pointer-events: none;
+        }
+
+        .buy-button.loading::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        /* Стилі для категорії корму */
+        .food-category .item-image {
+            background-color: #8a5a44;
+            border-color: #6d4c3a;
+        }
+
+        .placement-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1002;
+        }
+
+        .placement-container {
+            background: #222;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+            width: 80%;
+            max-width: 400px;
+        }
+
+        .placement-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .placement-grid div {
+            background: #444;
+            border: 2px solid #8a2be2;
+            border-radius: 5px;
+            height: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .placement-grid div:hover {
+            background: #555;
+            border-color: #ff8c00;
+        }
+
+        .cancel-placement {
+            background: #ff4444;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cancel-placement:hover {
+            background: #ff0000;
+        }
+
+        .placement-controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 1003;
+        }
+
+        .placement-button {
+            background: #0da33d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Press Start 2P', cursive;
+            transition: all 0.3s ease;
+        }
+
+        .placement-button:hover {
+            background: #6d1dbb;
+        }
+
+        .placement-button.cancel {
+            background: #ff4444;
+        }
+
+        .placement-button.cancel:hover {
+            background: #ff0000;
+        }
+
+        .placed-item {
+            position: absolute;
+            width: 60px;
+            height: 85px;
+            background-size: cover;
+            background-position: center;
+            z-index: 1;
+            cursor: move;
+        }
+
+        .move-button {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            z-index: 6;
+            transition: all 0.3s ease;
+            margin: 580px 6px 1px 1px;
+            /* верх, право, низ, ліво */
+        }
+
+        .move-button:hover {
+            background: #45a049;
+        }
+
+        .placed-item.tumb {
+            width: 90px;
+            height: 90px;
+        }
+
+        .placed-item.picture {
+            width: 70px;
+            height: 90px;
+        }
+
+        .item-image.picture {
+            box-shadow: 6px 10px 24px 0 rgba(60, 40, 20, 0.32);
+            border-radius: 8px;
+            background-color: transparent;
+            position: relative;
+        }
+
+
+        .item-image.picture::after {
+            content: '';
+            position: absolute;
+            left: 12px;
+            right: 12px;
+            top: 12px;
+            bottom: 12px;
+            border-radius: 8px;
+            box-shadow: 6px 10px 24px 0 rgba(60, 40, 20, 0.32);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .item-image.picture {
+            position: relative;
+            z-index: 1;
+        }
+
+        .placed-item.toy {
+            width: 50px;
+            height: 50px;
+        }
+
+        .shop-item.purchased {
+            opacity: 0.7;
+        }
+
+        .purchased-label {
+            color: #fff;
+            background: #4caf50;
+            border-radius: 6px;
+            padding: 6px 14px;
+            font-size: 13px;
+            font-family: 'Press Start 2P', cursive;
+            margin-bottom: 8px;
+            margin-top: 8px;
+            display: inline-block;
+        }
+
+        .delete-button {
+            background: #ff4444 !important;
+            color: #fff !important;
+            z-index: 10000 !important;
+            position: relative !important;
+            min-height: 32px !important;
+            font-size: 18px !important;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 14px;
+            font-size: 13px;
+            font-family: 'Press Start 2P', cursive;
+            cursor: pointer;
+            margin-top: 6px;
+            display: block;
+            transition: background 0.2s;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .delete-button:hover {
+            background: #c62828;
+        }
+
+        .shop-item.purchased {
+            min-height: 255px;
+        }
+
+        /* Для мисок не збільшуємо розмір навіть якщо куплено */
+        .shop-item.purchased.food-category,
+        .shop-item.purchased:not(.food-category):has(.item-name:contains('Миски')) {
+            min-height: 210px !important;
+        }
+
+        .shop-item.purchased.miska {
+            min-height: 210px !important;
+        }
+
+        .delete-modal-content {
+            background: #222;
+            color: #fff;
+            border-radius: 16px;
+            padding: 28px 18px 22px 18px;
+            min-width: 220px;
+            max-width: 260px;
+            width: 92vw;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7), 0 0 0 3px #ff8c00, 0 0 0 6px #8a2be2;
+            border: 3px solid #ff8c00;
+            text-align: center;
+            font-family: 'Press Start 2P', cursive;
+            position: relative;
+            margin: 0 auto;
+            font-size: 15px;
+        }
+
+        .delete-modal-title {
+            font-size: 15px;
+            margin-bottom: 22px;
+            font-family: 'Press Start 2P', cursive;
+            color: #fff;
+            text-shadow: 2px 2px 4px #000;
+            word-break: break-word;
+        }
+
+        .delete-modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+        }
+
+        .delete-modal-btn {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 13px;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 28px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            transition: background 0.2s, color 0.2s, transform 0.2s;
+            outline: none;
+        }
+
+        .delete-modal-btn.yes {
+            background: linear-gradient(145deg, #ff8c00, #ff4444);
+            color: #fff;
+            border: 2px solid #ff8c00;
+            text-shadow: 1px 1px 2px #000;
+        }
+
+        .delete-modal-btn.yes:hover {
+            background: linear-gradient(145deg, #ff4444, #ff8c00);
+            color: #fff;
+            transform: scale(1.05);
+        }
+
+        .delete-modal-btn.no {
+            background: #444;
+            color: #fff;
+            border: 2px solid #8a2be2;
+            text-shadow: 1px 1px 2px #000;
+        }
+
+        .delete-modal-btn.no:hover {
+            background: #8a2be2;
+            color: #fff;
+            transform: scale(1.05);
+        }
+
+        /* Стилі для повідомлення про поворот екрану */
+        .rotate-screen-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: url('photo/vertically.png') no-repeat center center;
+            background-size: cover;
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .rotate-screen-message {
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 16px;
+            max-width: 80%;
+        }
+
+        /* Показуємо повідомлення про поворот тільки в горизонтальному режимі */
+        @media (orientation: landscape) and (max-height: 600px) {
+            .rotate-screen-overlay {
+                display: flex;
+            }
+        }
+
+        /* Стилі для кнопки Урожай */
+        .harvest-button {
+            background: #ff9800;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            transition: background 0.2s;
+        }
+
+        .harvest-button:hover {
+            background: #e68900;
+        }
+
+        .placed-item.farm {
+            width: 100px !important;
+            height: 155px !important;
+            background-size: contain !important;
+            background-repeat: no-repeat;
+            background-position: center;
+            overflow: visible !important;
+            margin-bottom: 10px;
+            z-index: 2;
+        }
+
+        .flower-img {
+            width: 50px;
+            height: 85px;
+            object-fit: contain;
+            transition: filter 0.3s;
+            z-index: 3;
+        }
+
+        .harvest-flower-btn {
+            background: #ff9800;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 7px 10px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 11px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            transition: background 0.2s;
+            z-index: 3;
+            margin-top: 32px;
+            /* Більший відступ, щоб кнопка була нижче квітки */
+        }
+
+        .harvest-flower-btn:hover {
+            background: #e68900;
+        }
+
+        .flower-img.small {
+            width: 35px;
+            height: 50px;
+            z-index: 3;
+        }
+
+        .cactus-img.small {
+            width: 31px;
+            height: 26px;
+            margin-left: 4px;
+            z-index: 3;
+            margin-top: 10px;
+        }
+
+        .cactus-img.stage2 {
+            width: 26px;
+            height: 36px;
+            margin-left: 4px;
+            z-index: 3;
+        }
+
+        .cactus-img.stage3 {
+            width: 27px;
+            height: 53px;
+            margin-left: 5px;
+            z-index: 3;
+        }
+
+        .cactus-img.stage4 {
+            width: 40px;
+            height: 65px;
+            margin-left: 18px;
+            z-index: 3;
+        }
+
+        /* Модальне вікно для повідомлення про розблокування Фарм */
+        #farmLockModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #farmLockModal .modal-content {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #farmLockModal img {
+            max-width: 90vw;
+            max-height: 60vh;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+        }
+
+        #farmLockModal .modal-text {
+            position: absolute;
+            top: 32%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #000000;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 16px;
+            text-align: center;
+            padding: 10px 20px;
+            border-radius: 10px;
+            pointer-events: none;
+        }
+
+        .category .farm-text {
+            font-size: 12px;
+            color: inherit;
+            font-family: inherit;
+            font-weight: normal;
+            letter-spacing: inherit;
+            margin: 0 2px;
+        }
+
+        #farmLockModal .ok-overlay-btn {
+            position: absolute;
+            left: 48%;
+            top: 80%;
+            /* підлаштувати під розташування кнопки Ok на фото */
+            transform: translate(-50%, -50%);
+            width: 120px;
+            /* підлаштувати під розмір кнопки Ok на фото */
+            height: 42px;
+            background: none;
+            border: none;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        /* Додаю стилі для вирівнювання квіточок у flowerGallery */
+        #flowerGallery {
+            min-height: 155px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            position: relative;
+            /* вже є position: absolute, якщо ні — додати */
+            position: absolute;
+        }
+
+        .flower-img {
+            position: static;
+            height: 82px;
+            width: auto;
+            object-fit: contain;
+            left: unset;
+            bottom: unset;
+            transform: none;
+        }
+
+        .harvest-flower-btn {
+            margin-top: 8px;
+        }
+
+        /* Анімація bounce для напису 'Забери урожай' */
+        @keyframes bounce-harvest-label {
+            0% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(18px);
+            }
+
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        .harvest-label {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 15px;
+            color: #ff9800;
+            margin-bottom: 18px;
+            /* Підняти вище */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 4;
+            text-shadow: 2px 2px 0 #222, -2px 2px 0 #222, 2px -2px 0 #222, -2px -2px 0 #222, 0 2px 0 #222, 2px 0 0 #222, 0 -2px 0 #222, -2px 0 0 #222;
+            animation: bounce-harvest-label 2.2s infinite;
+            position: absolute;
+            top: -38px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: max-content;
+            pointer-events: none;
+        }
+
+        /* Додаю/оновлюю CSS для .harvest-label */
+        .harvest-label {
+            position: absolute;
+            left: -74%;
+            top: auto;
+            bottom: 59%;
+            transform: translateX(-50%);
+            width: max-content;
+            pointer-events: none;
+        }
+        .harvest-label-cactus {
+            position: absolute;
+            left: -20%;
+            top: auto;
+            bottom: 47%;
+            transform: translateX(-50%);
+            font-family: 'Press Start 2P', cursive;
+            font-size: 15px;
+            color: #ff9800;
+            margin-bottom: 18px;
+            /* Підняти вище */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 4;
+            text-shadow: 2px 2px 0 #222, -2px 2px 0 #222, 2px -2px 0 #222, -2px -2px 0 #222, 0 2px 0 #222, 2px 0 0 #222, 0 -2px 0 #222, -2px 0 0 #222;
+            animation: bounce-harvest-label 2.2s infinite;
+            position: absolute;
+            width: max-content;
+            pointer-events: none;
+        }
+
+        /* Стрілочка для грибочка: по центру над грибом через флекс-колонку #flowerGallery */
+        .harvest-label-mushroom {
+            position: static;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 15px;
+            color: #ff9800;
+            margin-bottom: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 4;
+            text-shadow: 2px 2px 0 #222, -2px 2px 0 #222, 2px -2px 0 #222, -2px 0 0 #222, 0 2px 0 #222, 2px 0 0 #222, 0 -2px 0 #222, -2px 0 0 #222;
+            animation: bounce-harvest-label 2.2s infinite;
+            width: max-content;
+            pointer-events: none;
+        }
