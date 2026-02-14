@@ -3519,7 +3519,7 @@
                 if (category === 'Іграшки') currentItem.classList.add('toy');
                 currentItem.style.backgroundImage = (category === 'Іграшки')
                     ? `url('shop/toy_${itemId}.png')`
-                    : `url('shop/${category}_${itemId}.png')`;
+                    : `url('shop/${getLatinCategory(category)}_${itemId}.png')`;
                 currentItem.style.left = `${window.innerWidth / 2 - 50}px`;
                 currentItem.style.top = `${window.innerHeight / 2 - 50}px`;
                 document.body.appendChild(currentItem);
