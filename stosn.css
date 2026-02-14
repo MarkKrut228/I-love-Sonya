@@ -2020,31 +2020,3 @@ section .list4 {
     margin: 40px 0;
 }
 
-.mandarin_big_container {
-    padding: 20px;
-    text-align: center;
-}
-
-.mandarin_big_btn {
-    display: block;
-    width: 100%;
-    max-width: 480px;
-    margin: 10px auto 30px;
-
-    padding: 20px;
-    font-size: 22px;
-    font-weight: bold;
-    text-decoration: none;
-
-    background: linear-gradient(180deg, #ffa726, #fb8c00);
-    color: white;
-
-    border-radius: 18px;
-    box-shadow: 0 6px 0 #c96f00;
-    transition: 0.15s;
-}
-
-.mandarin_big_btn:hover {
-    transform: translateY(2px);
-    box-shadow: 0 4px 0 #c96f00;
-}
