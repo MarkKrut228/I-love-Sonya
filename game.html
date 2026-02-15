@@ -1438,6 +1438,220 @@
             width: max-content;
             pointer-events: none;
         }
+
+        /* Міні-Ігри */
+        .minigames-btn {
+            position: absolute;
+            top: 75px; /* Вирівнюємо по вертикалі з барами (65px top + трохи зміщення) */
+            left: 205px; /* Справа від барів (170px width + 10px gap) */
+            z-index: 100;
+            background: linear-gradient(145deg, #9c27b0, #7b1fa2);
+            color: white;
+            border: 2px solid #fff;
+            padding: 8px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-family: 'Press Start 2P', cursive;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            text-shadow: 1px 1px 2px #000;
+            transition: transform 0.2s;
+            width: 120px;
+            text-align: center;
+        }
+        .minigames-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Меню Міні-Ігор */
+        .minigames-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .minigames-container {
+            background: #2d2d2d;
+            border: 4px solid #9c27b0;
+            border-radius: 15px;
+            padding: 20px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+            color: white;
+            font-family: 'Press Start 2P', cursive;
+        }
+        .minigames-header {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #e1bee7;
+            text-shadow: 2px 2px #4a148c;
+        }
+        .hearts-display {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #ff5252;
+            text-shadow: 2px 2px 0 #000;
+        }
+        .game-card {
+            background: #4a148c;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 2px solid #7b1fa2;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .game-card:hover {
+            transform: translateX(5px);
+            background: #6a1b9a;
+        }
+        .game-card.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            filter: grayscale(1);
+        }
+        .game-icon {
+            font-size: 24px;
+        }
+        .game-info {
+            text-align: left;
+            flex: 1;
+        }
+        .game-title {
+            font-size: 12px;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+        .game-desc {
+            font-size: 9px;
+            color: #ccc;
+        }
+        .close-minigames {
+            position: absolute;
+            top: -15px;
+            right: 5px;
+            background: #f44336;
+            color: white;
+            border: 2px solid #fff;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            font-size: 16px;
+            cursor: pointer;
+            font-family: 'Press Start 2P', cursive;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Гра: Лови мандаринки */
+        #mandarinGameCanvas {
+            border: 2px solid #fff;
+            background: rgba(0, 0, 0, 0.5);
+            display: block;
+            margin: 0 auto;
+        }
+        .game-overlay-content {
+            position: relative;
+            text-align: center;
+            color: white;
+            font-family: 'Press Start 2P', cursive;
+        }
+        .game-score-board {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 12px;
+            color: #fff;
+            text-shadow: 1px 1px #000;
+        }
+        .game-timer {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 12px;
+            color: #fff;
+            text-shadow: 1px 1px #000;
+        }
+
+        /* Гра: Подарунки */
+        .gifts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .gift-box {
+            background: #ff9800;
+            border: 2px solid #fff;
+            border-radius: 10px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .gift-box:active {
+            transform: scale(0.95);
+        }
+        .gift-box.opened {
+            background: #4caf50;
+            font-size: 14px;
+            padding: 5px;
+            text-align: center;
+            color: #fff;
+            cursor: default;
+        }
+        .gift-box.opened.prize {
+            background: #ffeb3b;
+            color: #000;
+        }
+
+        /* Гра: Злови котика */
+        .find-cat-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+            margin-top: 20px;
+            width: 280px;
+            height: 280px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .cat-cell {
+            background: #555;
+            border: 2px solid #777;
+            border-radius: 5px;
+            cursor: pointer;
+            position: relative;
+        }
+        .cat-cell.has-cat::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            height: 90%;
+            background: url('shop/img-baby.png') no-repeat center;
+            background-size: contain;
+            image-rendering: pixelated;
+        }
+
     </style>
 </head>
 
@@ -1457,9 +1671,10 @@
             <button class="menu-button" onclick="goBack()">Назад</button>
         </div>
         <div class="status-bars">
-            <img id="hungerBar" class="bar" src="images/hungry_0.png" style="width: 170px; height: 55px;">
-            <img id="energyBar" class="bar" src="images/energy_0.png" style="width: 170px; height: 55px;">
-        </div>
+        <img id="hungerBar" class="bar" src="images/hungry_0.png" style="width: 170px; height: 55px;">
+        <img id="energyBar" class="bar" src="images/energy_0.png" style="width: 170px; height: 55px;">
+    </div>
+    <div class="minigames-btn" onclick="openMiniGames()">Міні-Ігри</div>
     </div>
     <div style="z-index: 5;" class="cat"></div>
     <div style="z-index: 5; display: none;" class="black-cat"></div>
@@ -1551,6 +1766,45 @@
         </div>
     </div>
 
+    <!-- Меню Міні-Ігор -->
+    <div class="minigames-overlay" id="minigamesOverlay">
+        <div class="minigames-container">
+            <button class="close-minigames" onclick="closeMiniGames()">✕</button>
+            <div class="minigames-header">МІНІ-ІГРИ</div>
+            <div class="hearts-display" id="heartsDisplay">❤️❤️❤️</div>
+            <div class="game-card" onclick="startMiniGame('mandarin')">
+                <div class="game-icon">🍊</div>
+                <div class="game-info">
+                    <div class="game-title">Лови мандарінки</div>
+                    <div class="game-desc">Лови мандарінки, уникай промахів!</div>
+                </div>
+            </div>
+            <div class="game-card" onclick="startMiniGame('gift')">
+                <div class="game-icon">🎁</div>
+                <div class="game-info">
+                    <div class="game-title">Відкрий подарунок</div>
+                    <div class="game-desc">Знайди приз серед 6 коробок</div>
+                </div>
+            </div>
+            <div class="game-card" onclick="startMiniGame('findcat')">
+                    <div class="game-icon">🐱</div>
+                    <div class="game-info">
+                        <div class="game-title">Злови котика</div>
+                        <div class="game-desc">Спіймай котика в сітці 4x4</div>
+                    </div>
+                </div>
+            <div style="margin-top: 10px; font-size: 10px; color: #aaa;">
+                Сердечко відновлюється 1 годину
+            </div>
+        </div>
+    </div>
+
+    <!-- Контейнери для самих ігор -->
+    <div id="activeGameOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:3001; justify-content:center; align-items:center; flex-direction:column;">
+        <button class="close-minigames" style="top:20px; right:20px;" onclick="closeActiveGame()">✕</button>
+        <div id="gameContent" class="game-overlay-content"></div>
+    </div>
+
     <script>
         const cat = document.querySelector('.cat');
         const blackCat = document.querySelector('.black-cat');
@@ -1570,7 +1824,7 @@
         cat.style.top = `${startY}px`;
         const babyCat = document.querySelector('.baby-cat');
         const babyHearts = document.getElementById('babyHearts');
-        let coins = 50;
+        let coins = 0;
         let isSecretUnlocked = false;
         const SECRET_UNLOCK_PRICE = 111;
         const BOWL_FEED_COST = 10;
@@ -1578,8 +1832,14 @@
         const HARVEST_REWARD_FLOWER = 15;
         const HARVEST_REWARD_CACTUS = 30;
         const HARVEST_REWARD_MUSHROOM = 50;
-        const FALL_COIN_INTERVAL_MS = 20 * 60 * 1000;
+        const FALL_COIN_INTERVAL_MS = 5 * 60 * 1000;
         const FALL_COIN_REWARD = 10;
+        
+        // Змінні для Міні-Ігор
+        let hearts = 3;
+        let lastHeartUpdate = Date.now();
+        const HEART_REGEN_TIME = 1 * 60 * 60 * 1000; // 1 година
+
         function saveGameState() {
             const placedItemsData = [];
             document.querySelectorAll('.placed-item').forEach(el => {
@@ -1615,6 +1875,7 @@
                 hungerStage,
                 energyStage,
                 tasksState,
+                minigames: { hearts, lastHeartUpdate },
                 placedItems: placedItemsData,
                 farm: {
                     flower: { stage: typeof flowerCurrentStage !== 'undefined' ? flowerCurrentStage : 0, nextTs: typeof flowerNextTs !== 'undefined' ? flowerNextTs : 0 },
@@ -1705,6 +1966,11 @@
                 if (typeof s.energyStage === 'number') energyStage = s.energyStage;
                 if (s.tasksState) tasksState = { ...tasksState, ...s.tasksState };
                 
+                if (s.minigames) {
+                    hearts = s.minigames.hearts ?? 3;
+                    lastHeartUpdate = s.minigames.lastHeartUpdate ?? Date.now();
+                }
+
                 if (s.farm && s.farm.flower) {
                     flowerCurrentStage = s.farm.flower.stage || 0;
                     flowerNextTs = s.farm.flower.nextTs || 0;
@@ -2201,6 +2467,7 @@
             if (energyStage > 0) energyStage--;
 
             updateBars();
+            saveGameState(); // Зберігаємо стан після годування
 
             if (hungerStage < 5 && energyStage < 5 && isBlocked) {
                 resumeCatActions();
@@ -3015,6 +3282,7 @@
                     hungerStage = Math.max(0, hungerStage - hungerGain);
                     energyStage = Math.max(0, energyStage - energyGain);
                     updateBars();
+                    saveGameState(); // Зберігаємо стан після годування
                     isEating = false;
 
                     // Встановлюємо правильний масштаб після закінчення їжі
@@ -4537,6 +4805,357 @@
                     }
                 }
             });
+        }
+
+        // === Логіка Міні-Ігор ===
+        let heartTimerInterval;
+
+        function openMiniGames() {
+            checkHearts();
+            updateHeartsDisplay();
+            document.getElementById('minigamesOverlay').style.display = 'flex';
+            
+            if (heartTimerInterval) clearInterval(heartTimerInterval);
+            heartTimerInterval = setInterval(() => {
+                checkHearts();
+                updateHeartsDisplay();
+            }, 1000);
+        }
+
+        function closeMiniGames() {
+            document.getElementById('minigamesOverlay').style.display = 'none';
+            if (heartTimerInterval) clearInterval(heartTimerInterval);
+        }
+
+        function checkHearts() {
+            const now = Date.now();
+            if (hearts < 3) {
+                const timePassed = now - lastHeartUpdate;
+                const heartsToRecover = Math.floor(timePassed / HEART_REGEN_TIME);
+                if (heartsToRecover > 0) {
+                    hearts = Math.min(3, hearts + heartsToRecover);
+                    // Reset timer for the next heart, preserving the remainder
+                    // Actually, simple way: reset to now if full, or keep remainder?
+                    // "одне сердечко ... оновлюється кожні 2 години".
+                    // If I have 0 hearts and 4 hours passed -> 2 hearts. Next heart in 2 hours.
+                    // So I should advance lastHeartUpdate by heartsToRecover * 2 hours.
+                    lastHeartUpdate += heartsToRecover * HEART_REGEN_TIME;
+                    // Safety: don't let lastHeartUpdate go into future (shouldn't happen with floor)
+                    if (lastHeartUpdate > now) lastHeartUpdate = now; 
+                    
+                    saveGameState();
+                }
+            } else {
+                lastHeartUpdate = now; // Keep updating if full
+            }
+        }
+
+        function updateHeartsDisplay() {
+            const container = document.getElementById('heartsDisplay');
+            let heartsStr = '';
+            for (let i = 0; i < hearts; i++) heartsStr += '❤️';
+            for (let i = hearts; i < 3; i++) heartsStr += '🖤';
+            
+            if (hearts < 3) {
+                const now = Date.now();
+                const nextHeartTime = lastHeartUpdate + HEART_REGEN_TIME;
+                const timeLeftMs = nextHeartTime - now;
+                if (timeLeftMs > 0) {
+                    heartsStr += `<div style="font-size: 10px; margin-top: 5px; color: #aaa;">+❤️ через ${formatTime(timeLeftMs)}</div>`;
+                }
+            }
+            
+            container.innerHTML = heartsStr;
+        }
+
+        function startMiniGame(gameId) {
+            checkHearts();
+            if (hearts <= 0) {
+                alert('У вас закінчились сердечка! Зачекайте відновлення.');
+                return;
+            }
+
+            // Close menu
+            closeMiniGames();
+
+            // Deduct heart
+            hearts--;
+            // If we were at max hearts (3), we now have 2, and the timer starts NOW.
+            // If we were at 2 or 1, the timer is already running (lastHeartUpdate is old).
+            // Wait, if I was at 3, checkHearts set lastHeartUpdate = now.
+            // So decreasing to 2 means timer starts from now. Correct.
+            if (hearts === 2) {
+                lastHeartUpdate = Date.now();
+            }
+            saveGameState();
+
+            // Open Game Overlay
+            const overlay = document.getElementById('activeGameOverlay');
+            overlay.style.display = 'flex';
+            const content = document.getElementById('gameContent');
+            content.innerHTML = ''; // Clear previous
+
+            if (gameId === 'mandarin') runMandarinGame(content);
+            else if (gameId === 'gift') runGiftGame(content);
+            else if (gameId === 'findcat') runFindCatGame(content);
+        }
+
+        function closeActiveGame() {
+            // Cleanup any intervals
+            if (gameInterval) clearInterval(gameInterval);
+            if (gameTimerInterval) clearInterval(gameTimerInterval);
+            document.getElementById('activeGameOverlay').style.display = 'none';
+            openMiniGames(); // Return to menu
+        }
+
+        let gameInterval, gameTimerInterval;
+
+        // --- Гра 1: Лови мандаринки ---
+        function runMandarinGame(container) {
+            container.innerHTML = `
+                <div class="game-score-board">Рахунок: <span id="mandarinScore">0</span></div>
+                <div class="game-timer">Час: <span id="mandarinTime">30</span></div>
+                <canvas id="mandarinGameCanvas" width="300" height="400"></canvas>
+                <div style="margin-top:10px; font-size:10px; color:#ccc;">Керування: натискай на екран зліва/справа</div>
+            `;
+            
+            const canvas = document.getElementById('mandarinGameCanvas');
+            const ctx = canvas.getContext('2d');
+            let score = 0;
+            let timeLeft = 30;
+            let basketX = 125;
+            const basketW = 50;
+            const basketH = 30;
+            let mandarins = [];
+            
+            // Controls
+            let touchLeft = false;
+            let touchRight = false;
+            
+            // Touch areas for mobile/mouse
+            const handleInputStart = (x) => {
+                 if (x < canvas.width / 2) touchLeft = true;
+                 else touchRight = true;
+            };
+            const handleInputEnd = () => {
+                touchLeft = false;
+                touchRight = false;
+            };
+
+            canvas.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                const rect = canvas.getBoundingClientRect();
+                handleInputStart(e.touches[0].clientX - rect.left);
+            });
+            canvas.addEventListener('touchend', handleInputEnd);
+            canvas.addEventListener('mousedown', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                handleInputStart(e.clientX - rect.left);
+            });
+            canvas.addEventListener('mouseup', handleInputEnd);
+
+            // Game Loop
+            gameTimerInterval = setInterval(() => {
+                timeLeft--;
+                const timerEl = document.getElementById('mandarinTime');
+                if (timerEl) timerEl.textContent = timeLeft;
+                if (timeLeft <= 0) {
+                    endMandarinGame(score);
+                }
+            }, 1000);
+
+            let spawnCounter = 0;
+            gameInterval = setInterval(() => {
+                // Update Basket
+                if (touchLeft && basketX > 0) basketX -= 5;
+                if (touchRight && basketX < canvas.width - basketW) basketX += 5;
+
+                // Spawn Mandarin
+                spawnCounter++;
+                if (spawnCounter % 30 === 0) {
+                    mandarins.push({ x: Math.random() * (canvas.width - 20), y: 0, speed: 2 + Math.random() * 2 });
+                }
+
+                // Update Mandarins
+                for (let i = 0; i < mandarins.length; i++) {
+                    let m = mandarins[i];
+                    m.y += m.speed;
+                    
+                    // Collision
+                    if (m.y + 10 >= canvas.height - basketH && 
+                        m.x + 10 >= basketX && m.x <= basketX + basketW) {
+                        // Caught
+                        score++;
+                        coins++;
+                        updateBalanceUI();
+                        const scoreEl = document.getElementById('mandarinScore');
+                        if (scoreEl) scoreEl.textContent = score;
+                        mandarins.splice(i, 1);
+                        i--;
+                    } else if (m.y > canvas.height) {
+                        // Missed
+                        if (coins > 0) coins--;
+                        score--; // Decrease score too
+                        updateBalanceUI();
+                        const scoreEl = document.getElementById('mandarinScore');
+                        if (scoreEl) scoreEl.textContent = score;
+                        mandarins.splice(i, 1);
+                        i--;
+                    }
+                }
+
+                // Draw
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Basket
+                ctx.fillStyle = '#ff9800';
+                ctx.fillRect(basketX, canvas.height - basketH, basketW, basketH);
+                
+                // Mandarins
+                ctx.fillStyle = '#FFD700'; // Gold color for coins
+                mandarins.forEach(m => {
+                    ctx.beginPath();
+                    ctx.arc(m.x + 10, m.y + 10, 10, 0, Math.PI * 2);
+                    ctx.fill();
+                    // Optional: Add $ or symbol inside
+                    ctx.fillStyle = '#000';
+                    ctx.font = '12px Arial';
+                    ctx.fillText('$', m.x + 6, m.y + 14);
+                    ctx.fillStyle = '#FFD700';
+                });
+
+            }, 1000 / 60);
+        }
+
+        function endMandarinGame(score) {
+            clearInterval(gameInterval);
+            clearInterval(gameTimerInterval);
+            saveGameState();
+            alert(`Гра закінчена! Ваш рахунок: ${score}`);
+            closeActiveGame();
+        }
+
+        // --- Гра 2: Подарунки ---
+        function runGiftGame(container) {
+            container.innerHTML = '<div class="gifts-grid" id="giftsGrid"></div>';
+            const grid = document.getElementById('giftsGrid');
+            
+            const outcomes = [
+                { type: 'prize', val: 30, text: '+30🪙' },
+                { type: 'prize', val: 45, text: '+45🪙' },
+                { type: 'joke', text: 'Пусто!' },
+                { type: 'joke', text: 'Спробуй ще' },
+                { type: 'joke', text: 'Тільки пил' },
+                { type: 'joke', text: 'Миша втекла' }
+            ];
+            
+            // Shuffle
+            for (let i = outcomes.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [outcomes[i], outcomes[j]] = [outcomes[j], outcomes[i]];
+            }
+
+            outcomes.forEach((outcome, index) => {
+                const box = document.createElement('div');
+                box.className = 'gift-box';
+                box.textContent = '🎁';
+                box.onclick = function() {
+                    if (box.classList.contains('opened')) return;
+                    if (document.querySelector('.gift-box.opened')) return;
+
+                    box.classList.add('opened');
+                    box.textContent = outcome.text;
+                    
+                    if (outcome.type === 'prize') {
+                        box.classList.add('prize');
+                        coins += outcome.val;
+                        updateBalanceUI();
+                        saveGameState();
+                        setTimeout(() => alert(`Вітаємо! Ви виграли ${outcome.val} монет!`), 500);
+                    } else {
+                         setTimeout(() => alert(outcome.text), 500);
+                    }
+
+                    setTimeout(closeActiveGame, 2000);
+                };
+                grid.appendChild(box);
+            });
+        }
+
+        // --- Гра 3: Злови котика ---
+        function runFindCatGame(container) {
+            container.innerHTML = `
+                <div style="margin-bottom:10px;">Злови котика! (+10🪙)</div>
+                <div class="find-cat-grid" id="catGrid"></div>
+            `;
+            const grid = document.getElementById('catGrid');
+            
+            let catPos = -1;
+            let canClick = false;
+
+            function handleCellClick(index) {
+                if (!canClick) return;
+                
+                // Stop the game immediately on first click
+                canClick = false;
+                clearInterval(gameInterval);
+                
+                const cell = document.getElementById(`catCell-${index}`);
+                
+                if (index === catPos) {
+                    // HIT
+                    cell.style.backgroundColor = '#4caf50'; // Green
+                    coins += 10;
+                    updateBalanceUI();
+                    setTimeout(() => endFindCatGame(10), 500);
+                } else {
+                    // MISS
+                    cell.style.backgroundColor = '#f44336'; // Red
+                    setTimeout(() => endFindCatGame(0), 500);
+                }
+            }
+
+            for (let i = 0; i < 16; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'cat-cell';
+                cell.id = `catCell-${i}`;
+                cell.onclick = () => handleCellClick(i);
+                grid.appendChild(cell);
+            }
+
+            function moveCat() {
+                // Clear board
+                for (let i = 0; i < 16; i++) {
+                    const c = document.getElementById(`catCell-${i}`);
+                    if (c) {
+                        c.classList.remove('has-cat');
+                        c.style.backgroundColor = '';
+                    }
+                }
+
+                let newPos;
+                do {
+                    newPos = Math.floor(Math.random() * 16);
+                } while (newPos === catPos);
+                catPos = newPos;
+
+                const cell = document.getElementById(`catCell-${catPos}`);
+                if (cell) {
+                    cell.classList.add('has-cat');
+                }
+
+                canClick = true;
+            }
+
+            moveCat();
+            gameInterval = setInterval(moveCat, 600);
+        }
+
+        function endFindCatGame(score) {
+            clearInterval(gameInterval);
+            saveGameState();
+            alert(`Гра закінчена! Ви заробили ${score} монет.`);
+            closeActiveGame();
         }
 
         document.addEventListener('DOMContentLoaded', () => {
