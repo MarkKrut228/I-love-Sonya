@@ -4555,8 +4555,10 @@
             if (!gallery) return;
             gallery.style.display = 'flex';
             flowerCurrentStage = 0;
+            flowerNextTs = nowMs() + FARM_STAGE_MS;
             renderFlowerGallery();
             startFlowerInterval();
+            saveGameState();
         }
 
         function renderFlowerGallery() {
@@ -4582,8 +4584,10 @@
                     updateBalanceUI();
                     registerFarmHarvestTask();
                     flowerCurrentStage = 0;
+                    flowerNextTs = nowMs() + FARM_STAGE_MS;
                     renderFlowerGallery();
                     startFlowerInterval();
+                    saveGameState();
                 };
             } else {
                 img.onclick = null;
@@ -4652,8 +4656,10 @@
             if (!gallery) return;
             gallery.style.display = 'flex';
             cactusCurrentStage = 0;
+            cactusNextTs = nowMs() + FARM_STAGE_MS;
             renderCactusGallery();
             startCactusInterval();
+            saveGameState();
         }
 
         function renderCactusGallery() {
@@ -4687,8 +4693,10 @@
                     updateBalanceUI();
                     registerFarmHarvestTask();
                     cactusCurrentStage = 0;
+                    cactusNextTs = nowMs() + FARM_STAGE_MS;
                     renderCactusGallery();
                     startCactusInterval();
+                    saveGameState();
                 };
             } else {
                 img.onclick = null;
@@ -4738,8 +4746,10 @@
             if (!gallery) return;
             gallery.style.display = 'flex';
             mushroomCurrentStage = 0;
+            mushroomNextTs = nowMs() + FARM_STAGE_MS;
             renderMushroomGallery();
             startMushroomInterval();
+            saveGameState();
         }
 
         function renderMushroomGallery() {
@@ -4771,8 +4781,10 @@
                     updateBalanceUI();
                     registerFarmHarvestTask();
                     mushroomCurrentStage = 0;
+                    mushroomNextTs = nowMs() + FARM_STAGE_MS;
                     renderMushroomGallery();
                     startMushroomInterval();
+                    saveGameState();
                 };
             } else {
                 img.onclick = null;
