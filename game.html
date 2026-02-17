@@ -1834,6 +1834,11 @@
         const HARVEST_REWARD_MUSHROOM = 50;
         const FALL_COIN_INTERVAL_MS = 5 * 60 * 1000;
         const FALL_COIN_REWARD = 10;
+        const HUNGER_DECREASE_INTERVAL = 1.5 * 60 * 60 * 1000; // 1.5 години
+        const ENERGY_DECREASE_INTERVAL = 1 * 60 * 60 * 1000; // 1 година
+
+        let lastHungerDecrease = Date.now();
+        let lastEnergyDecrease = Date.now();
         
         // Змінні для Міні-Ігор
         let hearts = 3;
@@ -1874,6 +1879,8 @@
                 purchasedItems,
                 hungerStage,
                 energyStage,
+                lastHungerDecrease,
+                lastEnergyDecrease,
                 tasksState,
                 minigames: { hearts, lastHeartUpdate },
                 placedItems: placedItemsData,
@@ -1964,6 +1971,39 @@
                 if (Array.isArray(s.purchasedItems)) purchasedItems = s.purchasedItems;
                 if (typeof s.hungerStage === 'number') hungerStage = s.hungerStage;
                 if (typeof s.energyStage === 'number') energyStage = s.energyStage;
+                
+                // Restore timer for hunger/energy
+                lastHungerDecrease = s.lastHungerDecrease || Date.now();
+                lastEnergyDecrease = s.lastEnergyDecrease || Date.now();
+                
+                const now = Date.now();
+                
+                // Calculate elapsed hunger drops
+                const hungerElapsed = now - lastHungerDecrease;
+                if (hungerElapsed >= HUNGER_DECREASE_INTERVAL) {
+                    const drops = Math.floor(hungerElapsed / HUNGER_DECREASE_INTERVAL);
+                    // Apply drops
+                    for(let i=0; i<drops; i++) {
+                         if (hungerStage < 5) hungerStage++;
+                    }
+                    // Update timestamp (keep remainder to be fair)
+                    lastHungerDecrease += drops * HUNGER_DECREASE_INTERVAL;
+                    // Cap it to now if it drifted too far in future (unlikely) or past
+                    if (lastHungerDecrease > now) lastHungerDecrease = now; 
+                }
+
+                // Calculate elapsed energy drops
+                const energyElapsed = now - lastEnergyDecrease;
+                if (energyElapsed >= ENERGY_DECREASE_INTERVAL) {
+                    const drops = Math.floor(energyElapsed / ENERGY_DECREASE_INTERVAL);
+                    // Apply drops
+                    for(let i=0; i<drops; i++) {
+                         if (energyStage < 5) energyStage++;
+                    }
+                    lastEnergyDecrease += drops * ENERGY_DECREASE_INTERVAL;
+                    if (lastEnergyDecrease > now) lastEnergyDecrease = now;
+                }
+
                 if (s.tasksState) tasksState = { ...tasksState, ...s.tasksState };
                 
                 if (s.minigames) {
@@ -2576,11 +2616,27 @@
             }, walkTime);
         }
 
+        function checkStatusTimers() {
+            const now = Date.now();
+            
+            if (now - lastHungerDecrease >= HUNGER_DECREASE_INTERVAL) {
+                decreaseHunger();
+                lastHungerDecrease = now;
+                saveGameState();
+            }
+
+            if (now - lastEnergyDecrease >= ENERGY_DECREASE_INTERVAL) {
+                decreaseEnergy();
+                lastEnergyDecrease = now;
+                saveGameState();
+            }
+        }
+
         cat.addEventListener('click', toggleSit);
         setInterval(walk, 300);
         setInterval(moveCat, 1500);
-        setInterval(decreaseHunger, 60 * 60 * 1000);
-        setInterval(decreaseEnergy, 2 * 60 * 60 * 1000);
+        // Check timers every 10 seconds
+        setInterval(checkStatusTimers, 10000); 
 
         updateBars();
         startWalkingCycle();
@@ -5165,6 +5221,7 @@
             restoreSecretCats();
             updateBalanceUI();
             updateBars();
+            checkCatState();
             startFallingCoins();
 
             // Ініціалізація кнопок модального вікна секрету
